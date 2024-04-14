@@ -1,0 +1,5 @@
+example-override:
+  entity-types:
+    - "zombie"
+  mobs:
+    example-mob: 1
