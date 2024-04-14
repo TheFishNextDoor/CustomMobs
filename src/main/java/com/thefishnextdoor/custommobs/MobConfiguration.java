@@ -65,6 +65,7 @@ public class MobConfiguration {
 
         if (name != null) {
             entity.setCustomName(name);
+            entity.setCustomNameVisible(true);
         }
 
         if (entity instanceof LivingEntity) {
