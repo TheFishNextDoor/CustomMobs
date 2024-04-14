@@ -20,7 +20,9 @@ public class MobConfiguration {
 
     private EntityType type;
     private String name;
-    private boolean glowing;
+    private Boolean glowing = null;
+    private Boolean gravity = null;
+    private Boolean invulnerable = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -38,7 +40,17 @@ public class MobConfiguration {
             FishsCustomMobs.getInstance().getLogger().warning("Invalid type for mob " + id);
         }
 
-        this.glowing = config.getBoolean(id + ".glowing");
+        if (config.contains(id + ".glowing")) {
+            this.glowing = config.getBoolean(id + ".glowing");
+        }
+
+        if (config.contains(id + ".gravity")) {
+            this.gravity = config.getBoolean(id + ".gravity");
+        }
+
+        if (config.contains(id + ".invulnerable")) {
+            this.invulnerable = config.getBoolean(id + ".invulnerable");
+        }
 
         this.hand = ItemConfiguration.get(config.getString(id + ".hand"));
         this.offHand = ItemConfiguration.get(config.getString(id + ".off-hand"));
@@ -73,7 +85,17 @@ public class MobConfiguration {
             entity.setCustomNameVisible(true);
         }
 
-        entity.setGlowing(glowing);
+        if (glowing != null) {
+            entity.setGlowing(glowing);
+        }
+
+        if (gravity != null) {
+            entity.setGravity(gravity);
+        }
+
+        if (invulnerable != null) {
+            entity.setInvulnerable(invulnerable);
+        }
 
         if (entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
