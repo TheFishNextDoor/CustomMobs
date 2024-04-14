@@ -8,6 +8,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
+
+import com.thefishnextdoor.custommobs.util.EndOfTick;
 import com.thefishnextdoor.custommobs.util.EnumTools;
 
 public class MobConfiguration {
@@ -59,7 +61,7 @@ public class MobConfiguration {
     public void applyTo(Entity entity) {
         if (entity.getType() != type) {
             this.spawn(entity.getLocation());
-            entity.remove();
+            EndOfTick.remove(entity);
             return;
         }
 
