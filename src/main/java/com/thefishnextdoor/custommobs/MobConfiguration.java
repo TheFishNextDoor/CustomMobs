@@ -38,14 +38,14 @@ public class MobConfiguration {
             FishsCustomMobs.getInstance().getLogger().warning("Invalid type for mob " + id);
         }
 
-        glowing = config.getBoolean(id + ".glowing");
+        this.glowing = config.getBoolean(id + ".glowing");
 
-        hand = ItemConfiguration.get(config.getString(id + ".hand"));
-        offHand = ItemConfiguration.get(config.getString(id + ".off-hand"));
-        helmet = ItemConfiguration.get(config.getString(id + ".helmet"));
-        chestplate = ItemConfiguration.get(config.getString(id + ".chestplate"));
-        leggings = ItemConfiguration.get(config.getString(id + ".leggings"));
-        boots = ItemConfiguration.get(config.getString(id + ".boots"));
+        this.hand = ItemConfiguration.get(config.getString(id + ".hand"));
+        this.offHand = ItemConfiguration.get(config.getString(id + ".off-hand"));
+        this.helmet = ItemConfiguration.get(config.getString(id + ".helmet"));
+        this.chestplate = ItemConfiguration.get(config.getString(id + ".chestplate"));
+        this.leggings = ItemConfiguration.get(config.getString(id + ".leggings"));
+        this.boots = ItemConfiguration.get(config.getString(id + ".boots"));
         
         this.name = config.getString(id + ".name");
 
