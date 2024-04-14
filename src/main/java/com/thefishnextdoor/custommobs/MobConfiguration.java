@@ -19,12 +19,15 @@ public class MobConfiguration {
     private final String id;
 
     private EntityType type;
+
     private String name;
+    
     private Boolean glowing = null;
     private Boolean gravity = null;
     private Boolean invulnerable = null;
     private Boolean persistent = null;
     private Boolean silent = null;
+    private Boolean visualFire = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -60,6 +63,10 @@ public class MobConfiguration {
 
         if (config.contains(id + ".silent")) {
             this.silent = config.getBoolean(id + ".silent");
+        }
+
+        if (config.contains(id + ".visual-fire")) {
+            this.visualFire = config.getBoolean(id + ".visual-fire");
         }
 
         this.hand = ItemConfiguration.get(config.getString(id + ".hand"));
@@ -113,6 +120,10 @@ public class MobConfiguration {
 
         if (silent != null) {
             entity.setSilent(silent);
+        }
+
+        if (visualFire != null) {
+            entity.setVisualFire(visualFire);
         }
 
         if (entity instanceof LivingEntity) {
