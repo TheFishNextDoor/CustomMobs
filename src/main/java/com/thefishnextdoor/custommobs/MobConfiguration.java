@@ -20,6 +20,7 @@ public class MobConfiguration {
 
     private EntityType type;
     private String name;
+    private boolean glowing;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -36,6 +37,8 @@ public class MobConfiguration {
             this.type = EntityType.PIG;
             FishsCustomMobs.getInstance().getLogger().warning("Invalid type for mob " + id);
         }
+
+        glowing = config.getBoolean(id + ".glowing");
 
         hand = ItemConfiguration.get(config.getString(id + ".hand"));
         offHand = ItemConfiguration.get(config.getString(id + ".off-hand"));
@@ -69,6 +72,8 @@ public class MobConfiguration {
             entity.setCustomName(name);
             entity.setCustomNameVisible(true);
         }
+
+        entity.setGlowing(glowing);
 
         if (entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
