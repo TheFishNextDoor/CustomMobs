@@ -23,6 +23,8 @@ public class MobConfiguration {
     private Boolean glowing = null;
     private Boolean gravity = null;
     private Boolean invulnerable = null;
+    private Boolean persistent = null;
+    private Boolean silent = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -50,6 +52,14 @@ public class MobConfiguration {
 
         if (config.contains(id + ".invulnerable")) {
             this.invulnerable = config.getBoolean(id + ".invulnerable");
+        }
+
+        if (config.contains(id + ".persistent")) {
+            this.persistent = config.getBoolean(id + ".persistent");
+        }
+
+        if (config.contains(id + ".silent")) {
+            this.silent = config.getBoolean(id + ".silent");
         }
 
         this.hand = ItemConfiguration.get(config.getString(id + ".hand"));
@@ -95,6 +105,14 @@ public class MobConfiguration {
 
         if (invulnerable != null) {
             entity.setInvulnerable(invulnerable);
+        }
+
+        if (persistent != null) {
+            entity.setPersistent(persistent);
+        }
+
+        if (silent != null) {
+            entity.setSilent(silent);
         }
 
         if (entity instanceof LivingEntity) {
