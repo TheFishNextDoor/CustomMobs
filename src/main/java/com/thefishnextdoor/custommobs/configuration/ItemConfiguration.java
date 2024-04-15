@@ -24,6 +24,7 @@ public class ItemConfiguration {
     private Material material;
     private String name;
     private List<String> lore;
+    private Boolean unbreakable = null;
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
     public ItemConfiguration(YamlConfiguration config, String id) {
@@ -40,6 +41,10 @@ public class ItemConfiguration {
         
         this.name = config.getString(id + ".name");
         this.lore = config.getStringList(id);
+
+        if (config.contains(id + ".unbreakable")) {
+            this.unbreakable = config.getBoolean(id + ".unbreakable");
+        }
 
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
@@ -73,6 +78,10 @@ public class ItemConfiguration {
 
         if (!lore.isEmpty()) {
             meta.setLore(lore);
+        }
+
+        if (unbreakable != null) {
+            meta.setUnbreakable(unbreakable);
         }
 
         item.setItemMeta(meta);
