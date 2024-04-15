@@ -29,6 +29,9 @@ public class MobConfiguration {
     private Boolean silent = null;
     private Boolean visualFire = null;
 
+    private Float pitch = null;
+    private Float yaw = null;
+
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
     private ItemConfiguration helmet;
@@ -45,28 +48,32 @@ public class MobConfiguration {
             FishsCustomMobs.getInstance().getLogger().warning("Invalid type for mob " + id);
         }
 
+        this.name = config.getString(id + ".name");
+
         if (config.contains(id + ".glowing")) {
             this.glowing = config.getBoolean(id + ".glowing");
         }
-
         if (config.contains(id + ".gravity")) {
             this.gravity = config.getBoolean(id + ".gravity");
         }
-
         if (config.contains(id + ".invulnerable")) {
             this.invulnerable = config.getBoolean(id + ".invulnerable");
         }
-
         if (config.contains(id + ".persistent")) {
             this.persistent = config.getBoolean(id + ".persistent");
         }
-
         if (config.contains(id + ".silent")) {
             this.silent = config.getBoolean(id + ".silent");
         }
-
         if (config.contains(id + ".visual-fire")) {
             this.visualFire = config.getBoolean(id + ".visual-fire");
+        }
+
+        if (config.contains(id + ".pitch")) {
+            this.pitch = (float) config.getDouble(id + ".pitch");
+        }
+        if (config.contains(id + ".yaw")) {
+            this.yaw = (float) config.getDouble(id + ".yaw");
         }
 
         this.hand = ItemConfiguration.get(config.getString(id + ".hand"));
@@ -75,8 +82,6 @@ public class MobConfiguration {
         this.chestplate = ItemConfiguration.get(config.getString(id + ".chestplate"));
         this.leggings = ItemConfiguration.get(config.getString(id + ".leggings"));
         this.boots = ItemConfiguration.get(config.getString(id + ".boots"));
-        
-        this.name = config.getString(id + ".name");
 
         mobConfigurations.put(id, this);
     }
@@ -105,25 +110,28 @@ public class MobConfiguration {
         if (glowing != null) {
             entity.setGlowing(glowing);
         }
-
         if (gravity != null) {
             entity.setGravity(gravity);
         }
-
         if (invulnerable != null) {
             entity.setInvulnerable(invulnerable);
         }
-
         if (persistent != null) {
             entity.setPersistent(persistent);
         }
-
         if (silent != null) {
             entity.setSilent(silent);
         }
-
         if (visualFire != null) {
             entity.setVisualFire(visualFire);
+        }
+
+        Location location = entity.getLocation();
+        if (pitch != null) {
+            location.setPitch(pitch);
+        }
+        if (yaw != null) {
+            location.setYaw(yaw);
         }
 
         if (entity instanceof LivingEntity) {
