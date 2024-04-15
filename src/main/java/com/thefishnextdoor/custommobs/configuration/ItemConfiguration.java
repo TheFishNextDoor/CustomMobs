@@ -1,6 +1,7 @@
-package com.thefishnextdoor.custommobs;
+package com.thefishnextdoor.custommobs.configuration;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,6 +9,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.thefishnextdoor.custommobs.Config;
+import com.thefishnextdoor.custommobs.FishsCustomMobs;
 import com.thefishnextdoor.custommobs.util.EnchantTools;
 import com.thefishnextdoor.custommobs.util.EnumTools;
 
@@ -22,12 +25,15 @@ public class ItemConfiguration {
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
     public ItemConfiguration(YamlConfiguration config, String id) {
+        Logger logger = FishsCustomMobs.getInstance().getLogger();
+
         this.id = id;
 
         this.material = EnumTools.fromString(Material.class, config.getString(id + ".material"));
         if (material == null) {
             this.material = Material.STONE;
-            FishsCustomMobs.getInstance().getLogger().warning("Invalid material for item " + id);
+            logger.warning("Invalid material for item " + id);
+            logger.warning("Valid materials are: " + EnumTools.allStrings(Material.class));
         }
         
         this.name = config.getString(id + ".name");
@@ -35,7 +41,7 @@ public class ItemConfiguration {
         for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
             Enchantment enchantment = EnchantTools.fromString(enchantmentName);
             if (enchantment == null) {
-                FishsCustomMobs.getInstance().getLogger().warning("Invalid enchantment for item " + id + ": " + enchantmentName);
+                logger.warning("Invalid enchantment for item " + id + ": " + enchantmentName);
                 continue;
             }
 

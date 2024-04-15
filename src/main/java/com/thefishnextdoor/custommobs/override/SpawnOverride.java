@@ -1,7 +1,8 @@
-package com.thefishnextdoor.custommobs;
+package com.thefishnextdoor.custommobs.override;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,6 +10,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
+import com.thefishnextdoor.custommobs.Config;
+import com.thefishnextdoor.custommobs.FishsCustomMobs;
+import com.thefishnextdoor.custommobs.configuration.MobConfiguration;
 import com.thefishnextdoor.custommobs.util.EnumTools;
 
 public class SpawnOverride {
@@ -32,6 +36,8 @@ public class SpawnOverride {
     private Integer maxZ = null;
 
     public SpawnOverride(YamlConfiguration config, String id) {
+        Logger logger = FishsCustomMobs.getInstance().getLogger();
+
         this.priority = config.getInt(id + ".priority");
 
         for (String mobId : config.getConfigurationSection(id + ".mobs").getKeys(false)) {
@@ -41,7 +47,7 @@ public class SpawnOverride {
                 linkedEntityConfigurations.add(new LinkedMobConfiguration(mobConfiguration, weight));
             }
             else {
-                FishsCustomMobs.getInstance().getLogger().warning("Invalid mob for override " + id + ": " + mobId);
+                logger.warning("Invalid mob for override " + id + ": " + mobId);
             }
         }
 
@@ -52,7 +58,8 @@ public class SpawnOverride {
         for (String reasonName : config.getStringList(id + ".spawn-reasons")) {
             SpawnReason reason = EnumTools.fromString(SpawnReason.class, reasonName);
             if (reason == null) {
-                FishsCustomMobs.getInstance().getLogger().warning("Invalid spawn reason for override " + id + ": " + reasonName);
+                logger.warning("Invalid spawn reason for override " + id + ": " + reasonName);
+                logger.warning("Valid spawn reasons are: " + EnumTools.allStrings(SpawnReason.class));
                 continue;
             }
 
@@ -62,7 +69,9 @@ public class SpawnOverride {
         for (String typeName : config.getStringList(id + ".entity-types")) {
             EntityType entityType = EnumTools.fromString(EntityType.class, typeName);
             if (entityType == null) {
-                FishsCustomMobs.getInstance().getLogger().warning("Invalid entity type for override " + id + ": " + typeName);
+                logger.warning("Invalid entity type for override " + id + ": " + typeName);
+                logger.warning("Valid entity types are: " + EnumTools.allStrings(EntityType.class));
+
                 continue;
             }
 

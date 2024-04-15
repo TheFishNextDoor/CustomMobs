@@ -1,4 +1,6 @@
-package com.thefishnextdoor.custommobs;
+package com.thefishnextdoor.custommobs.override;
+
+import com.thefishnextdoor.custommobs.configuration.MobConfiguration;
 
 public class LinkedMobConfiguration {
 

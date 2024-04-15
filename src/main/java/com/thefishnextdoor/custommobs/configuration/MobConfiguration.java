@@ -1,6 +1,7 @@
-package com.thefishnextdoor.custommobs;
+package com.thefishnextdoor.custommobs.configuration;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,6 +10,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 
+import com.thefishnextdoor.custommobs.Config;
+import com.thefishnextdoor.custommobs.FishsCustomMobs;
 import com.thefishnextdoor.custommobs.util.EndOfTick;
 import com.thefishnextdoor.custommobs.util.EnumTools;
 
@@ -40,12 +43,15 @@ public class MobConfiguration {
     private ItemConfiguration boots;
 
     public MobConfiguration(YamlConfiguration config, String id) {
+        Logger logger = FishsCustomMobs.getInstance().getLogger();
+        
         this.id = id;
 
         this.type = EnumTools.fromString(EntityType.class, config.getString(id + ".type"));
         if (type == null) {
             this.type = EntityType.PIG;
-            FishsCustomMobs.getInstance().getLogger().warning("Invalid type for mob " + id);
+            logger.warning("Invalid type for mob " + id);
+            logger.warning("Valid types are: " + EnumTools.allStrings(EntityType.class));
         }
 
         this.name = config.getString(id + ".name");
