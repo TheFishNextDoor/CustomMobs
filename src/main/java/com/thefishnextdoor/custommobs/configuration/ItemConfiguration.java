@@ -38,16 +38,18 @@ public class ItemConfiguration {
         
         this.name = config.getString(id + ".name");
 
-        for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
-            Enchantment enchantment = EnchantTools.fromString(enchantmentName);
-            if (enchantment == null) {
-                logger.warning("Invalid enchantment for item " + id + ": " + enchantmentName);
-                continue;
-            }
-
-            int level = config.getInt(id + ".enchantments." + enchantmentName);
-            if (level > 0) {
-                enchantments.put(enchantment, level);
+        if (config.contains(id + ".enchantments")) {
+            for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
+                Enchantment enchantment = EnchantTools.fromString(enchantmentName);
+                if (enchantment == null) {
+                    logger.warning("Invalid enchantment for item " + id + ": " + enchantmentName);
+                    continue;
+                }
+    
+                int level = config.getInt(id + ".enchantments." + enchantmentName);
+                if (level > 0) {
+                    enchantments.put(enchantment, level);
+                }
             }
         }
 
