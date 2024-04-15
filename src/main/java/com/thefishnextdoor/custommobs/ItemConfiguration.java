@@ -4,9 +4,11 @@ import java.util.HashMap;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.thefishnextdoor.custommobs.util.EnchantTools;
 import com.thefishnextdoor.custommobs.util.EnumTools;
 
 public class ItemConfiguration {
@@ -17,6 +19,7 @@ public class ItemConfiguration {
 
     private Material material;
     private String name;
+    private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
     public ItemConfiguration(YamlConfiguration config, String id) {
         this.id = id;
@@ -28,6 +31,19 @@ public class ItemConfiguration {
         }
         
         this.name = config.getString(id + ".name");
+
+        for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
+            Enchantment enchantment = EnchantTools.fromString(enchantmentName);
+            if (enchantment == null) {
+                FishsCustomMobs.getInstance().getLogger().warning("Invalid enchantment for item " + id + ": " + enchantmentName);
+                continue;
+            }
+
+            int level = config.getInt(id + ".enchantments." + enchantmentName);
+            if (level > 0) {
+                enchantments.put(enchantment, level);
+            }
+        }
 
         itemConfigurations.put(id, this);
     }
@@ -45,6 +61,11 @@ public class ItemConfiguration {
         }
 
         item.setItemMeta(meta);
+
+        for (Enchantment enchantment : enchantments.keySet()) {
+            item.addUnsafeEnchantment(enchantment, enchantments.get(enchantment));
+        }
+        
         return item;
     }
 
