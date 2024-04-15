@@ -1,4 +1,4 @@
-package com.thefishnextdoor.custommobs.override;
+package com.thefishnextdoor.custommobs;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,18 +10,36 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
-import com.thefishnextdoor.custommobs.Config;
-import com.thefishnextdoor.custommobs.FishsCustomMobs;
 import com.thefishnextdoor.custommobs.configuration.MobConfiguration;
 import com.thefishnextdoor.custommobs.util.EnumTools;
 
 public class SpawnOverride {
 
+    private static class LinkedMobConfiguration {
+
+        private final MobConfiguration mobConfiguration;
+    
+        private final int weight;
+    
+        private LinkedMobConfiguration(MobConfiguration mobConfiguration, int weight) {
+            this.mobConfiguration = mobConfiguration;
+            this.weight = weight;
+        }
+    
+        public MobConfiguration unWrap() {
+            return mobConfiguration;
+        }
+    
+        public int getWeight() {
+            return weight;
+        }
+    }    
+
     private static ArrayList<SpawnOverride> spawnOverrides = new ArrayList<>();
 
     private int priority;
 
-    private ArrayList<LinkedMobConfiguration> linkedEntityConfigurations = new ArrayList<>();
+    private ArrayList<LinkedMobConfiguration> linkedMobConfigurations = new ArrayList<>();
 
     private HashSet<String> worlds = new HashSet<>();
     private HashSet<SpawnReason> spawnReasons = new HashSet<>();
@@ -44,7 +62,7 @@ public class SpawnOverride {
             int weight = config.getInt(id + ".mobs." + mobId);
             MobConfiguration mobConfiguration = MobConfiguration.get(mobId);
             if (mobConfiguration != null) {
-                linkedEntityConfigurations.add(new LinkedMobConfiguration(mobConfiguration, weight));
+                linkedMobConfigurations.add(new LinkedMobConfiguration(mobConfiguration, weight));
             }
             else {
                 logger.warning("Invalid mob for override " + id + ": " + mobId);
@@ -149,12 +167,12 @@ public class SpawnOverride {
 
     public void applyTo(CreatureSpawnEvent event) {
         int totalWeight = 0;
-        for (LinkedMobConfiguration linkedEntityConfiguration : linkedEntityConfigurations) {
+        for (LinkedMobConfiguration linkedEntityConfiguration : linkedMobConfigurations) {
             totalWeight += linkedEntityConfiguration.getWeight();
         }
 
         int random = (int) (Math.random() * totalWeight);
-        for (LinkedMobConfiguration linkedEntityConfiguration : linkedEntityConfigurations) {
+        for (LinkedMobConfiguration linkedEntityConfiguration : linkedMobConfigurations) {
             random -= linkedEntityConfiguration.getWeight();
             if (random <= 0) {
                 linkedEntityConfiguration.unWrap().applyTo(event.getEntity());

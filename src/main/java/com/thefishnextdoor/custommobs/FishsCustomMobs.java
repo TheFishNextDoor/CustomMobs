@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.thefishnextdoor.custommobs.configuration.ItemConfiguration;
 import com.thefishnextdoor.custommobs.configuration.MobConfiguration;
 import com.thefishnextdoor.custommobs.event.CreatureSpawn;
-import com.thefishnextdoor.custommobs.override.SpawnOverride;
 
 public class FishsCustomMobs extends JavaPlugin {
 
