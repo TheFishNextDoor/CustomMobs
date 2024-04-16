@@ -89,7 +89,6 @@ public class SpawnOverride {
             if (entityType == null) {
                 logger.warning("Invalid entity type for override " + id + ": " + typeName);
                 logger.warning("Valid entity types are: " + EnumTools.allStrings(EntityType.class));
-
                 continue;
             }
 
