@@ -17,7 +17,6 @@ public class EnumTools {
     }
 
     public static String allStrings(Class<? extends Enum<?>> enumClass) {
-        // Make a string that contains all the enum values separated by a comma
         StringBuilder builder = new StringBuilder();
         for (Enum<?> constant : enumClass.getEnumConstants()) {
             if (builder.length() > 0) {
