@@ -22,9 +22,15 @@ public class ItemConfiguration {
     private final String id;
 
     private Material material;
+
+    private int amount = 1;
+
     private String name;
+
     private List<String> lore;
+
     private Boolean unbreakable = null;
+
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
     public ItemConfiguration(YamlConfiguration config, String id) {
@@ -37,6 +43,10 @@ public class ItemConfiguration {
             this.material = Material.STONE;
             logger.warning("Invalid material for item " + id);
             logger.warning("Valid materials are: " + EnumTools.allStrings(Material.class));
+        }
+
+        if (config.contains(id + ".amount")) {
+            this.amount = config.getInt(id + ".amount");
         }
         
         this.name = config.getString(id + ".name");
@@ -69,7 +79,7 @@ public class ItemConfiguration {
     }
 
     public ItemStack create() {
-        ItemStack item = new ItemStack(material);
+        ItemStack item = new ItemStack(material, amount);
         ItemMeta meta = item.getItemMeta();
 
         if (name != null) {
