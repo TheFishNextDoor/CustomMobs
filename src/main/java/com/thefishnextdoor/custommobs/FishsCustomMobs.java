@@ -11,8 +11,6 @@ public class FishsCustomMobs extends JavaPlugin {
 
     private static FishsCustomMobs instance;
 
-    private static boolean debug = true;
-
     public void onEnable() {
         instance = this;
 
@@ -32,11 +30,5 @@ public class FishsCustomMobs extends JavaPlugin {
 
     public static FishsCustomMobs getInstance() {
         return instance;
-    }
-
-    public static void debug(String message) {
-        if (debug) {
-            getInstance().getLogger().info(message);
-        }
     }
 }
