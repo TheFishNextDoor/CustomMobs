@@ -2,9 +2,11 @@ package com.thefishnextdoor.custommobs;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Location;
+import org.bukkit.World.Environment;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -37,11 +39,27 @@ public class SpawnOverride {
 
     private static ArrayList<SpawnOverride> spawnOverrides = new ArrayList<>();
 
+    private static List<String> settings = List.of(
+        "priority",
+        "mobs",
+        "worlds",
+        "environments",
+        "spawn-reasons",
+        "entity-types",
+        "min-x",
+        "min-y",
+        "min-z",
+        "max-x",
+        "max-y",
+        "max-z"
+    );
+
     private int priority;
 
     private ArrayList<LinkedMobConfiguration> linkedMobConfigurations = new ArrayList<>();
 
     private HashSet<String> worlds = new HashSet<>();
+    private HashSet<Environment> environments = new HashSet<>();
     private HashSet<SpawnReason> spawnReasons = new HashSet<>();
     private HashSet<EntityType> entityTypes = new HashSet<>();
 
@@ -55,6 +73,14 @@ public class SpawnOverride {
 
     public SpawnOverride(YamlConfiguration config, String id) {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
+
+        for (String setting : config.getConfigurationSection(id).getKeys(false)) {
+            if (!settings.contains(setting)) {
+                logger.warning("Invalid setting for override " + id + ": " + setting);
+                String possibleSettings = String.join(", ", settings);
+                logger.warning("Valid settings are: " + possibleSettings);
+            }
+        }
 
         this.priority = config.getInt(id + ".priority");
 
@@ -71,6 +97,17 @@ public class SpawnOverride {
 
         for (String world : config.getStringList(id + ".worlds")) {
             worlds.add(world);
+        }
+
+        for (String environmentName : config.getStringList(id + ".environments")) {
+            Environment environment = EnumTools.fromString(Environment.class, environmentName);
+            if (environment == null) {
+                logger.warning("Invalid environment for override " + id + ": " + environmentName);
+                logger.warning("Valid environments are: " + EnumTools.allStrings(Environment.class));
+                continue;
+            }
+
+            environments.add(environment);
         }
 
         for (String reasonName : config.getStringList(id + ".spawn-reasons")) {
@@ -126,6 +163,10 @@ public class SpawnOverride {
         Location location = event.getLocation();
 
         if (worlds.size() > 0 && !worlds.contains(location.getWorld().getName())) {
+            return false;
+        }
+
+        if (environments.size() > 0 && !environments.contains(location.getWorld().getEnvironment())) {
             return false;
         }
 

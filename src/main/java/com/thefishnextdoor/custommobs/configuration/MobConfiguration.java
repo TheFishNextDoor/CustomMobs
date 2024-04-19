@@ -2,6 +2,7 @@ package com.thefishnextdoor.custommobs.configuration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Location;
@@ -19,6 +20,25 @@ import com.thefishnextdoor.custommobs.util.EnumTools;
 public class MobConfiguration {
 
     private static HashMap<String, MobConfiguration> mobConfigurations = new HashMap<>();
+
+    private static List<String> settings = List.of(
+        "type",
+        "name",
+        "glowing",
+        "gravity",
+        "invulnerable",
+        "persistent",
+        "silent",
+        "visual-fire",
+        "pitch",
+        "yaw",
+        "hand",
+        "off-hand",
+        "helmet",
+        "chestplate",
+        "leggings",
+        "boots"
+    );
 
     private final String id;
 
@@ -47,6 +67,14 @@ public class MobConfiguration {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
         
         this.id = id;
+
+        for (String setting : config.getConfigurationSection(id).getKeys(false)) {
+            if (!settings.contains(setting)) {
+                logger.warning("Invalid setting for mob " + id + ": " + setting);
+                String possibleSettings = String.join(", ", settings);
+                logger.warning("Valid settings are: " + possibleSettings);
+            }
+        }
 
         this.type = EnumTools.fromString(EntityType.class, config.getString(id + ".type"));
         if (type == null) {

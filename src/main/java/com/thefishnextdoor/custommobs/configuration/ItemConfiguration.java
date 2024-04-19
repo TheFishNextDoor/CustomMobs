@@ -20,6 +20,14 @@ public class ItemConfiguration {
 
     private static HashMap<String, ItemConfiguration> itemConfigurations = new HashMap<>();
 
+    private static List<String> settings = List.of(
+        "material",
+        "name",
+        "lore",
+        "unbreakable",
+        "enchantments"
+    );
+
     private final String id;
 
     private Material material;
@@ -36,6 +44,14 @@ public class ItemConfiguration {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
 
         this.id = id;
+
+        for (String setting : config.getConfigurationSection(id).getKeys(false)) {
+            if (!settings.contains(setting)) {
+                logger.warning("Invalid setting for item " + id + ": " + setting);
+                String possibleSettings = String.join(", ", settings);
+                logger.warning("Valid settings are: " + possibleSettings);
+            }
+        }
 
         this.material = EnumTools.fromString(Material.class, config.getString(id + ".material"));
         if (material == null) {
