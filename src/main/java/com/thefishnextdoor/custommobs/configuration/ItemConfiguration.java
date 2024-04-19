@@ -1,5 +1,6 @@
 package com.thefishnextdoor.custommobs.configuration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,8 +24,6 @@ public class ItemConfiguration {
 
     private Material material;
 
-    private int amount = 1;
-
     private String name;
 
     private List<String> lore;
@@ -43,10 +42,6 @@ public class ItemConfiguration {
             this.material = Material.STONE;
             logger.warning("Invalid material for item " + id);
             logger.warning("Valid materials are: " + EnumTools.allStrings(Material.class));
-        }
-
-        if (config.contains(id + ".amount")) {
-            this.amount = config.getInt(id + ".amount");
         }
         
         this.name = config.getString(id + ".name");
@@ -78,7 +73,7 @@ public class ItemConfiguration {
         return id;
     }
 
-    public ItemStack create() {
+    public ItemStack create(int amount) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta meta = item.getItemMeta();
 
@@ -105,6 +100,14 @@ public class ItemConfiguration {
 
     public static ItemConfiguration get(String id) {
         return itemConfigurations.get(id);
+    }
+
+    public static ArrayList<String> getIds() {
+        ArrayList<String> names = new ArrayList<>();
+        for (String id : itemConfigurations.keySet()) {
+            names.add(id);
+        }
+        return names;
     }
 
     public static void loadConfig() {

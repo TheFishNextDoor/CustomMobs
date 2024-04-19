@@ -2,3 +2,12 @@ name: FishsCustomMobs
 main: com.thefishnextdoor.custommobs.FishsCustomMobs
 version: 0.0.1
 api-version: 1.20
+author: TheFishNextDoor
+description: Custom Mobs Plugin
+commands:
+  fcm:
+    description: Main command for FishsCustomMobs
+    usage: /fcm <subcommand>
+    aliases:
+    - fishscustommobs
+    - custommobs

@@ -1,5 +1,6 @@
 package com.thefishnextdoor.custommobs.configuration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -145,28 +146,36 @@ public class MobConfiguration {
             EntityEquipment equipment = livingEntity.getEquipment();
 
             if (hand != null) {
-                equipment.setItemInMainHand(hand.create());
+                equipment.setItemInMainHand(hand.create(1));
             }
             if (offHand != null) {
-                equipment.setItemInOffHand(offHand.create());
+                equipment.setItemInOffHand(offHand.create(1));
             }
             if (helmet != null) {
-                equipment.setHelmet(helmet.create());
+                equipment.setHelmet(helmet.create(1));
             }
             if (chestplate != null) {
-                equipment.setChestplate(chestplate.create());
+                equipment.setChestplate(chestplate.create(1));
             }
             if (leggings != null) {
-                equipment.setLeggings(leggings.create());
+                equipment.setLeggings(leggings.create(1));
             }
             if (boots != null) {
-                equipment.setBoots(boots.create());
+                equipment.setBoots(boots.create(1));
             }
         }
     }
 
     public static MobConfiguration get(String id) {
         return mobConfigurations.get(id);
+    }
+
+    public static ArrayList<String> getIds() {
+        ArrayList<String> names = new ArrayList<>();
+        for (String id : mobConfigurations.keySet()) {
+            names.add(id);
+        }
+        return names;
     }
 
     public static void loadConfig() {
