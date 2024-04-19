@@ -6,15 +6,21 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import com.thefishnextdoor.custommobs.Config;
 import com.thefishnextdoor.custommobs.FishsCustomMobs;
 import com.thefishnextdoor.custommobs.util.EnchantTools;
 import com.thefishnextdoor.custommobs.util.EnumTools;
+import com.thefishnextdoor.custommobs.util.RegistryTools;
 
 public class ItemConfiguration {
 
@@ -25,6 +31,8 @@ public class ItemConfiguration {
         "name",
         "lore",
         "unbreakable",
+        "trim-material",
+        "trim-pattern",
         "enchantments"
     );
 
@@ -39,6 +47,8 @@ public class ItemConfiguration {
     private Boolean unbreakable = null;
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
+
+    private ArmorTrim armorTrim = null;
 
     public ItemConfiguration(YamlConfiguration config, String id) {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
@@ -65,6 +75,26 @@ public class ItemConfiguration {
 
         if (config.contains(id + ".unbreakable")) {
             this.unbreakable = config.getBoolean(id + ".unbreakable");
+        }
+
+        if (config.contains(id + ".trim-material") && config.contains(id + ".trim-pattern")) {
+            String trimMaterialName = config.getString(id + ".trim-material");
+            TrimMaterial trimMaterial = RegistryTools.fromString(Registry.TRIM_MATERIAL, trimMaterialName);
+            if (trimMaterial == null) {
+                logger.warning("Invalid trim material for item " + id + ": " + trimMaterialName);
+                logger.warning("Valid trim materials are: " + RegistryTools.allStrings(Registry.TRIM_MATERIAL));
+            }
+
+            String trimPatternName = config.getString(id + ".trim-pattern");
+            TrimPattern trimPattern = RegistryTools.fromString(Registry.TRIM_PATTERN, trimPatternName);
+            if (trimPattern == null) {
+                logger.warning("Invalid trim pattern for item " + id + ": " + trimPatternName);
+                logger.warning("Valid trim patterns are: " + RegistryTools.allStrings(Registry.TRIM_PATTERN));
+            }
+
+            if (trimMaterial != null && trimPattern != null) {
+                this.armorTrim = new ArmorTrim(trimMaterial, trimPattern);
+            }
         }
 
         if (config.contains(id + ".enchantments")) {
@@ -103,6 +133,13 @@ public class ItemConfiguration {
 
         if (unbreakable != null) {
             meta.setUnbreakable(unbreakable);
+        }
+
+        if (meta instanceof ArmorMeta) {
+            ArmorMeta armorMeta = (ArmorMeta) meta;
+            if (armorTrim != null) {
+                armorMeta.setTrim(armorTrim);
+            }
         }
 
         item.setItemMeta(meta);
