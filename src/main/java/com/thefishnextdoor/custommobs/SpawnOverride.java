@@ -214,14 +214,24 @@ public class SpawnOverride {
             totalWeight += linkedEntityConfiguration.getWeight();
         }
 
-        SpawnReason reason = event.getSpawnReason();
-        boolean fromItem = reason == SpawnReason.SPAWNER_EGG;
+        boolean delayRemoval;
+        switch (event.getSpawnReason()) {
+            case SPAWNER_EGG:
+            case BUILD_IRONGOLEM:
+            case BUILD_SNOWMAN:
+            case BUILD_WITHER:
+                delayRemoval = true;
+                break;
+            default:
+                delayRemoval = false;
+                break;
+        }
 
         int random = (int) (Math.random() * totalWeight);
         for (LinkedMobConfiguration linkedEntityConfiguration : linkedMobConfigurations) {
             random -= linkedEntityConfiguration.getWeight();
             if (random <= 0) {
-                linkedEntityConfiguration.unWrap().applyTo(event.getEntity(), fromItem);
+                linkedEntityConfiguration.unWrap().applyTo(event.getEntity(), delayRemoval);
                 return;
             }
         }
