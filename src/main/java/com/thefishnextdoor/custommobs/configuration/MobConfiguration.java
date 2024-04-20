@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -63,6 +65,8 @@ public class MobConfiguration {
     private ItemConfiguration leggings;
     private ItemConfiguration boots;
 
+    private Integer health = null;
+
     public MobConfiguration(YamlConfiguration config, String id) {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
         
@@ -117,6 +121,10 @@ public class MobConfiguration {
         this.chestplate = ItemConfiguration.get(config.getString(id + ".chestplate"));
         this.leggings = ItemConfiguration.get(config.getString(id + ".leggings"));
         this.boots = ItemConfiguration.get(config.getString(id + ".boots"));
+
+        if (config.contains(id + ".health")) {
+            this.health = config.getInt(id + ".health");
+        }
 
         mobConfigurations.put(id, this);
     }
@@ -195,6 +203,14 @@ public class MobConfiguration {
             }
             if (boots != null) {
                 equipment.setBoots(boots.create(1));
+            }
+
+            if (health != null) {
+                AttributeInstance maxHealthAttribute = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                if (maxHealthAttribute != null) {
+                    maxHealthAttribute.setBaseValue(health);
+                    livingEntity.setHealth(health);
+                }
             }
         }
     }
