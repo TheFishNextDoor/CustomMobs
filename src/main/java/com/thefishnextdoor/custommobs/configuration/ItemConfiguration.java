@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Registry;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
@@ -48,6 +50,7 @@ public class ItemConfiguration {
         "author",
         "pages",
         "book-generation",
+        "color",
         "enchantments"
     );
 
@@ -74,6 +77,8 @@ public class ItemConfiguration {
     private List<String> pages;
     
     private BookMeta.Generation bookGeneration;
+
+    private Color color = null;
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -193,6 +198,21 @@ public class ItemConfiguration {
             }
         }
 
+        if (config.contains(id + ".color")) {
+            String colorCode = config.getString(id + ".color");
+            if (colorCode.length() != 7 || colorCode.charAt(0) != '#') {
+                logger.warning("Invalid color for item " + id + ": " + colorCode);
+                logger.warning("Color must be in the format: #RRGGBB");
+            }   
+            try {
+                int hex = Integer.parseInt(colorCode.substring(1), 16);
+                this.color = Color.fromRGB(hex);
+            } catch (NumberFormatException e) {
+                logger.warning("Invalid color for item " + id + ": " + colorCode);
+                logger.warning("Color must be in the format: #RRGGBB");
+            }
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -265,6 +285,13 @@ public class ItemConfiguration {
             }
             if (bookGeneration != null) {
                 bookMeta.setGeneration(bookGeneration);
+            }
+        }
+
+        if (meta instanceof LeatherArmorMeta) {
+            LeatherArmorMeta leatherMeta = (LeatherArmorMeta) meta;
+            if (color != null) {
+                leatherMeta.setColor(color);
             }
         }
 
