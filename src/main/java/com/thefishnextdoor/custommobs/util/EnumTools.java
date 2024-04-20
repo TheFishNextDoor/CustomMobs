@@ -7,6 +7,8 @@ public class EnumTools {
             return null;
         }
 
+        name = name.trim();
+
         for (E constant : enumClass.getEnumConstants()) {
             if (constant.name().equalsIgnoreCase(name)) {
                 return constant;

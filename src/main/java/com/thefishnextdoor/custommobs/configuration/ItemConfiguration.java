@@ -5,14 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Registry;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
@@ -36,6 +40,7 @@ public class ItemConfiguration {
         "trim-material",
         "trim-pattern",
         "axolotl",
+        "banner-patterns",
         "enchantments"
     );
 
@@ -52,6 +57,8 @@ public class ItemConfiguration {
     private ArmorTrim armorTrim = null;
 
     private Axolotl.Variant axolotl = null;
+
+    private List<Pattern> bannerPatterns = new ArrayList<>();
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -111,6 +118,35 @@ public class ItemConfiguration {
             }
         }
 
+        if (config.contains(id + ".banner-patterns")) {
+            for (String patternString : config.getStringList(id + ".banner-patterns")) {
+                String[] patternParts = patternString.split(",");
+                if (patternParts.length != 2) {
+                    logger.warning("Invalid banner pattern for item " + id + ": " + patternString);
+                    logger.warning("Pattern must be in the format: <patern>, <color>");
+                    continue;
+                }
+
+                String patternName = patternParts[0];
+                PatternType patternType = EnumTools.fromString(PatternType.class, patternName);
+                if (patternType == null) {
+                    logger.warning("Invalid banner pattern for item " + id + ": " + patternName);
+                    logger.warning("Valid banner patterns are: " + EnumTools.allStrings(PatternType.class));
+                    continue;
+                }
+
+                String colorName = patternParts[1];
+                DyeColor color = EnumTools.fromString(DyeColor.class, colorName);
+                if (color == null) {
+                    logger.warning("Invalid banner color for item " + id + ": " + colorName);
+                    logger.warning("Valid banner colors are: " + EnumTools.allStrings(DyeColor.class));
+                    continue;
+                }
+
+                bannerPatterns.add(new Pattern(color, patternType));
+            }
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -160,6 +196,13 @@ public class ItemConfiguration {
             AxolotlBucketMeta axolotlMeta = (AxolotlBucketMeta) meta;
             if (axolotl != null) {
                 axolotlMeta.setVariant(axolotl);
+            }
+        }
+
+        if (meta instanceof BannerMeta) {
+            BannerMeta bannerMeta = (BannerMeta) meta;
+            for (Pattern pattern : bannerPatterns) {
+                bannerMeta.addPattern(pattern);
             }
         }
 
