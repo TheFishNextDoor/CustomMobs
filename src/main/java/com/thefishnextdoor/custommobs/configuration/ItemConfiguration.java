@@ -20,6 +20,7 @@ import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
@@ -310,10 +311,20 @@ public class ItemConfiguration {
             }
         }
 
+        boolean enchantedBook = meta instanceof EnchantmentStorageMeta;
+        if (enchantedBook) {
+            EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) meta;
+            for (Enchantment enchantment : enchantments.keySet()) {
+                enchantmentStorageMeta.addStoredEnchant(enchantment, enchantments.get(enchantment), true);
+            }
+        }
+
         item.setItemMeta(meta);
 
-        for (Enchantment enchantment : enchantments.keySet()) {
-            item.addUnsafeEnchantment(enchantment, enchantments.get(enchantment));
+        if (!enchantedBook) {
+            for (Enchantment enchantment : enchantments.keySet()) {
+                item.addUnsafeEnchantment(enchantment, enchantments.get(enchantment));
+            }
         }
         
         return item;
