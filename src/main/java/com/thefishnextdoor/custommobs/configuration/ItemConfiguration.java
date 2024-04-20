@@ -9,6 +9,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.MusicInstrument;
 import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.block.banner.Pattern;
@@ -26,7 +27,9 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
@@ -62,6 +65,7 @@ public class ItemConfiguration {
         "damage",
         "lodestone",
         "effects",
+        "instrument",
         "enchantments"
     );
 
@@ -96,6 +100,8 @@ public class ItemConfiguration {
     private Location lodestone = null;
 
     private ArrayList<PotionEffect> potionEffects = new ArrayList<>();
+
+    private MusicInstrument instrument = null;
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -301,6 +307,15 @@ public class ItemConfiguration {
             }
         }
 
+        if (config.contains(id + ".instrument")) {
+            String instrumentName = config.getString(id + ".instrument");
+            instrument = RegistryTools.fromString(Registry.INSTRUMENT, instrumentName);
+            if (instrument == null) {
+                logger.warning("Invalid instrument for item " + id + ": " + instrumentName);
+                logger.warning("Valid instruments are: " + RegistryTools.allStrings(Registry.INSTRUMENT));
+            }
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -404,6 +419,20 @@ public class ItemConfiguration {
             }
             if (color != null) {
                 potionMeta.setColor(color);
+            }
+        }
+
+        if (meta instanceof SuspiciousStewMeta) {
+            SuspiciousStewMeta stewMeta = (SuspiciousStewMeta) meta;
+            for (PotionEffect effect : potionEffects) {
+                stewMeta.addCustomEffect(effect, true);
+            }
+        }
+
+        if (meta instanceof MusicInstrumentMeta) {
+            MusicInstrumentMeta instrumentMeta = (MusicInstrumentMeta) meta;
+            if (instrument != null) {
+                instrumentMeta.setInstrument(instrument);
             }
         }
 
