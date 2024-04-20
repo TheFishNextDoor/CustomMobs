@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import com.thefishnextdoor.custommobs.Debug;
 import com.thefishnextdoor.custommobs.FishsCustomMobs;
 import com.thefishnextdoor.custommobs.configuration.ItemConfiguration;
 import com.thefishnextdoor.custommobs.configuration.MobConfiguration;
@@ -19,6 +20,7 @@ import net.md_5.bungee.api.ChatColor;
 public class FCM implements CommandExecutor, TabCompleter {
 
     private static final String RELOAD_PERMISSION = "fcm.reload";
+    private static final String DEBUG_PERMISSION = "fcm.debug";
     private static final String SUMMON_PERMISSION = "fcm.summon";
     private static final String GIVE_PERMISSION = "fcm.give";
 
@@ -29,6 +31,9 @@ public class FCM implements CommandExecutor, TabCompleter {
             subcommands.add("help");
             if (sender.hasPermission(RELOAD_PERMISSION)) {
                 subcommands.add("reload");
+            }
+            if (sender.hasPermission(DEBUG_PERMISSION)) {
+                subcommands.add("debug");
             }
             if (sender.hasPermission(SUMMON_PERMISSION)) {
                 subcommands.add("summon");
@@ -83,6 +88,13 @@ public class FCM implements CommandExecutor, TabCompleter {
         if (args[0].equalsIgnoreCase("reload") && sender.hasPermission(RELOAD_PERMISSION)) {
             FishsCustomMobs.loadConfigs();
             sender.sendMessage(ChatColor.GREEN + "Plugin reloaded");
+            return true;
+        }
+
+        // Debug //
+        if (args[0].equalsIgnoreCase("debug") && sender.hasPermission(DEBUG_PERMISSION)) {
+            Debug.debug = !Debug.debug;
+            sender.sendMessage(ChatColor.DARK_GREEN + "Console debugging " + (Debug.debug ? "enabled" : "disabled"));
             return true;
         }
 
