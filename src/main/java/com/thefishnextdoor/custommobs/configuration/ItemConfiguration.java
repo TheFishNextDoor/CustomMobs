@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
@@ -27,6 +28,8 @@ import com.thefishnextdoor.custommobs.FishsCustomMobs;
 import com.thefishnextdoor.custommobs.util.EnchantTools;
 import com.thefishnextdoor.custommobs.util.EnumTools;
 import com.thefishnextdoor.custommobs.util.RegistryTools;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class ItemConfiguration {
 
@@ -41,6 +44,10 @@ public class ItemConfiguration {
         "trim-pattern",
         "axolotl",
         "banner-patterns",
+        "title",
+        "author",
+        "pages",
+        "book-generation",
         "enchantments"
     );
 
@@ -59,6 +66,14 @@ public class ItemConfiguration {
     private Axolotl.Variant axolotl = null;
 
     private List<Pattern> bannerPatterns = new ArrayList<>();
+
+    private String title;
+
+    private String author;
+
+    private List<String> pages;
+    
+    private BookMeta.Generation bookGeneration;
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -83,7 +98,14 @@ public class ItemConfiguration {
         }
         
         this.name = config.getString(id + ".name");
+        if (name != null) {
+            this.name = ChatColor.translateAlternateColorCodes('&', this.name);
+        }
+
         this.lore = config.getStringList(id);
+        for (int i = 0; i < lore.size(); i++) {
+            lore.set(i, ChatColor.translateAlternateColorCodes('&', lore.get(i)));
+        }
 
         if (config.contains(id + ".unbreakable")) {
             this.unbreakable = config.getBoolean(id + ".unbreakable");
@@ -147,6 +169,30 @@ public class ItemConfiguration {
             }
         }
 
+        this.title = config.getString(id + ".title");
+        if (title != null) {
+            this.title = ChatColor.translateAlternateColorCodes('&', this.title);
+        }
+
+        this.author = config.getString(id + ".author");
+        if (author != null) {
+            this.author = ChatColor.translateAlternateColorCodes('&', this.author);
+        }
+
+        this.pages = config.getStringList(id + ".pages");
+        for (int i = 0; i < pages.size(); i++) {
+            pages.set(i, ChatColor.translateAlternateColorCodes('&', pages.get(i)));
+        }
+
+        if (config.contains(id + ".book-generation")) {
+            String generationName = config.getString(id + ".book-generation");
+            bookGeneration = EnumTools.fromString(BookMeta.Generation.class, generationName);
+            if (bookGeneration == null) {
+                logger.warning("Invalid book generation for item " + id + ": " + generationName);
+                logger.warning("Valid book generations are: " + EnumTools.allStrings(BookMeta.Generation.class));
+            }
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -203,6 +249,22 @@ public class ItemConfiguration {
             BannerMeta bannerMeta = (BannerMeta) meta;
             for (Pattern pattern : bannerPatterns) {
                 bannerMeta.addPattern(pattern);
+            }
+        }
+
+        if (meta instanceof BookMeta) {
+            BookMeta bookMeta = (BookMeta) meta;
+            if (title != null) {
+                bookMeta.setTitle(title);
+            }
+            if (author != null) {
+                bookMeta.setAuthor(author);
+            }
+            for (String page : pages) {
+                bookMeta.addPage(page);
+            }
+            if (bookGeneration != null) {
+                bookMeta.setGeneration(bookGeneration);
             }
         }
 
