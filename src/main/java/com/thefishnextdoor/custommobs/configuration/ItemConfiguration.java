@@ -7,8 +7,10 @@ import java.util.logging.Logger;
 
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Registry;
+import org.bukkit.World;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,6 +21,7 @@ import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -54,6 +57,7 @@ public class ItemConfiguration {
         "book-generation",
         "color",
         "damage",
+        "lodestone",
         "enchantments"
     );
 
@@ -84,6 +88,8 @@ public class ItemConfiguration {
     private Color color = null;
 
     private Integer damage = null;
+
+    private Location lodestone = null;
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -222,6 +228,41 @@ public class ItemConfiguration {
             this.damage = config.getInt(id + ".damage");
         }
 
+        if (config.contains(id + ".lodestone")) {
+            String lodestoneString = config.getString(id + ".lodestone");
+            String[] parts = lodestoneString.split(",");
+            if (parts.length != 4) {
+                logger.warning("Invalid lodestone location for item " + id + ": " + lodestoneString);
+                logger.warning("Lodestone must be in the format: <world>, <x>, <y>, <z>");
+            }
+
+            String worldName = parts[0];
+            World world = FishsCustomMobs.getInstance().getServer().getWorld(worldName);
+            if (world == null) {
+                logger.warning("Invalid world for lodestone location for item " + id + ": " + worldName);
+                logger.warning("Lodestone must be in the format: <world>, <x>, <y>, <z>");
+            }
+
+            Double x;
+            Double y;
+            Double z;
+            try {
+                x = Double.parseDouble(parts[1]);
+                y = Double.parseDouble(parts[2]);
+                z = Double.parseDouble(parts[3]);
+            } catch (NumberFormatException e) {
+                logger.warning("Invalid coordinates for lodestone location for item " + id + ": " + lodestoneString);
+                logger.warning("Lodestone must be in the format: <world>, <x>, <y>, <z>");
+                x = null;
+                y = null;
+                z = null;
+            }
+
+            if (world != null && x != null && y != null && z != null) {
+                lodestone = new Location(world, x, y, z);
+            }
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -308,6 +349,13 @@ public class ItemConfiguration {
             Damageable damageMeta = (Damageable) meta;
             if (damage != null) {
                 damageMeta.setDamage(damage);
+            }
+        }
+
+        if (meta instanceof CompassMeta) {
+            CompassMeta compassMeta = (CompassMeta) meta;
+            if (lodestone != null) {
+                compassMeta.setLodestone(lodestone);
             }
         }
 
