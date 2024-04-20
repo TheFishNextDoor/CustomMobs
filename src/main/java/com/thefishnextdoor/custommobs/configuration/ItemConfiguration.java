@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
@@ -51,6 +52,7 @@ public class ItemConfiguration {
         "pages",
         "book-generation",
         "color",
+        "damage",
         "enchantments"
     );
 
@@ -79,6 +81,8 @@ public class ItemConfiguration {
     private BookMeta.Generation bookGeneration;
 
     private Color color = null;
+
+    private Integer damage = null;
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -213,6 +217,10 @@ public class ItemConfiguration {
             }
         }
 
+        if (config.contains(id + ".damage")) {
+            this.damage = config.getInt(id + ".damage");
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -292,6 +300,13 @@ public class ItemConfiguration {
             LeatherArmorMeta leatherMeta = (LeatherArmorMeta) meta;
             if (color != null) {
                 leatherMeta.setColor(color);
+            }
+        }
+
+        if (meta instanceof Damageable) {
+            Damageable damageMeta = (Damageable) meta;
+            if (damage != null) {
+                damageMeta.setDamage(damage);
             }
         }
 
