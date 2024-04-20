@@ -211,11 +211,14 @@ public class SpawnOverride {
             totalWeight += linkedEntityConfiguration.getWeight();
         }
 
+        SpawnReason reason = event.getSpawnReason();
+        boolean fromItem = reason == SpawnReason.SPAWNER_EGG;
+
         int random = (int) (Math.random() * totalWeight);
         for (LinkedMobConfiguration linkedEntityConfiguration : linkedMobConfigurations) {
             random -= linkedEntityConfiguration.getWeight();
             if (random <= 0) {
-                linkedEntityConfiguration.unWrap().applyTo(event.getEntity());
+                linkedEntityConfiguration.unWrap().applyTo(event.getEntity(), fromItem);
                 return;
             }
         }

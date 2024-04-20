@@ -8,8 +8,12 @@ import com.thefishnextdoor.custommobs.SpawnOverride;
 
 public class CreatureSpawn implements Listener {
 
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void EntitySpawn(CreatureSpawnEvent event) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
+            return;
+        }
+
         SpawnOverride override = SpawnOverride.get(event);
         if (override != null) {
             override.applyTo(event);

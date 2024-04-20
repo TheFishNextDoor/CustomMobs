@@ -127,13 +127,18 @@ public class MobConfiguration {
 
     public void spawn(Location location) {
         Entity entity = location.getWorld().spawnEntity(location, type);
-        this.applyTo(entity);
+        this.applyTo(entity, false);
     }
 
-    public void applyTo(Entity entity) {
+    public void applyTo(Entity entity, boolean removeAtEndOfTick) {
         if (entity.getType() != type) {
             this.spawn(entity.getLocation());
-            EndOfTick.remove(entity);
+            if (removeAtEndOfTick) {
+                EndOfTick.remove(entity);
+            }
+            else {
+                entity.remove();
+            }
             return;
         }
 
