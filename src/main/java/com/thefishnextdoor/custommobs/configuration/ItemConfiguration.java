@@ -26,9 +26,12 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.thefishnextdoor.custommobs.Config;
 import com.thefishnextdoor.custommobs.FishsCustomMobs;
@@ -58,6 +61,7 @@ public class ItemConfiguration {
         "color",
         "damage",
         "lodestone",
+        "effects",
         "enchantments"
     );
 
@@ -90,6 +94,8 @@ public class ItemConfiguration {
     private Integer damage = null;
 
     private Location lodestone = null;
+
+    private ArrayList<PotionEffect> potionEffects = new ArrayList<>();
 
     private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -263,6 +269,38 @@ public class ItemConfiguration {
             }
         }
 
+        if (config.contains(id + ".effects")) {
+            for (String effectString : config.getStringList(id + ".effects")) {
+                String[] parts = effectString.split(",");
+                if (parts.length != 3) {
+                    logger.warning("Invalid potion effect for item " + id + ": " + effectString);
+                    logger.warning("Potion effect must be in the format: <effect>, <amplifier>, <ticks>");
+                    continue;
+                }
+
+                String effectName = parts[0].trim();
+                PotionEffectType effectType = RegistryTools.fromString(Registry.EFFECT, effectName);
+                if (effectType == null) {
+                    logger.warning("Invalid potion effect for item " + id + ": " + effectName);
+                    logger.warning("Valid potion effects are: " + RegistryTools.allStrings(Registry.EFFECT));
+                    continue;
+                }
+
+                int amplifier;
+                int ticks;
+                try {
+                    amplifier = Integer.parseInt(parts[1].trim());
+                    ticks = Integer.parseInt(parts[2].trim());
+                } catch (NumberFormatException e) {
+                    logger.warning("Invalid amplifier or duration for potion effect for item " + id + ": " + effectString);
+                    logger.warning("Potion effect must be in the format: <effect>, <amplifier>, <ticks>");
+                    continue;
+                }
+
+                potionEffects.add(new PotionEffect(effectType, ticks, amplifier));
+            }
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -356,6 +394,16 @@ public class ItemConfiguration {
             CompassMeta compassMeta = (CompassMeta) meta;
             if (lodestone != null) {
                 compassMeta.setLodestone(lodestone);
+            }
+        }
+
+        if (meta instanceof PotionMeta) {
+            PotionMeta potionMeta = (PotionMeta) meta;
+            for (PotionEffect effect : potionEffects) {
+                potionMeta.addCustomEffect(effect, true);
+            }
+            if (color != null) {
+                potionMeta.setColor(color);
             }
         }
 
