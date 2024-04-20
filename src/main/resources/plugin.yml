@@ -14,8 +14,6 @@ commands:
 permissions:
   fcm.reload:
     description: Permission to reload the plugin
-  fcm.debug:
-    description: Permission to use console debugger
   fcm.summon:
     description: Permission to summon custom mobs
   fcm.give:

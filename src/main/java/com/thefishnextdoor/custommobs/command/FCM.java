@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
@@ -20,7 +21,6 @@ import net.md_5.bungee.api.ChatColor;
 public class FCM implements CommandExecutor, TabCompleter {
 
     private static final String RELOAD_PERMISSION = "fcm.reload";
-    private static final String DEBUG_PERMISSION = "fcm.debug";
     private static final String SUMMON_PERMISSION = "fcm.summon";
     private static final String GIVE_PERMISSION = "fcm.give";
 
@@ -32,7 +32,7 @@ public class FCM implements CommandExecutor, TabCompleter {
             if (sender.hasPermission(RELOAD_PERMISSION)) {
                 subcommands.add("reload");
             }
-            if (sender.hasPermission(DEBUG_PERMISSION)) {
+            if (sender instanceof ConsoleCommandSender) {
                 subcommands.add("debug");
             }
             if (sender.hasPermission(SUMMON_PERMISSION)) {
@@ -72,8 +72,12 @@ public class FCM implements CommandExecutor, TabCompleter {
         // Help //
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sender.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Fish's Custom Mobs");
+            sender.sendMessage(ChatColor.GREEN + "/fcm help " + ChatColor.WHITE + "Show this help message");
             if (sender.hasPermission(RELOAD_PERMISSION)) {
                 sender.sendMessage(ChatColor.GREEN + "/fcm reload " + ChatColor.WHITE + "Reload the plugin");
+            }
+            if (sender instanceof ConsoleCommandSender) {
+                sender.sendMessage(ChatColor.GREEN + "/fcm debug " + ChatColor.WHITE + "Toggle console debugging");
             }
             if (sender.hasPermission(SUMMON_PERMISSION)) {
                 sender.sendMessage(ChatColor.GREEN + "/fcm summon <mob> " + ChatColor.WHITE + "Summon a custom mob");
@@ -92,7 +96,7 @@ public class FCM implements CommandExecutor, TabCompleter {
         }
 
         // Debug //
-        if (args[0].equalsIgnoreCase("debug") && sender.hasPermission(DEBUG_PERMISSION)) {
+        if (args[0].equalsIgnoreCase("debug") && sender instanceof ConsoleCommandSender) {
             Debug.debug = !Debug.debug;
             sender.sendMessage(ChatColor.DARK_GREEN + "Console debugging " + (Debug.debug ? "enabled" : "disabled"));
             return true;
