@@ -39,7 +39,8 @@ public class MobConfiguration {
         "helmet",
         "chestplate",
         "leggings",
-        "boots"
+        "boots",
+        "health"
     );
 
     private final String id;
