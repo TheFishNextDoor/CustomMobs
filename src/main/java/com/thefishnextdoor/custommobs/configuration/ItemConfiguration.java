@@ -9,8 +9,10 @@ import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Axolotl;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
@@ -33,6 +35,7 @@ public class ItemConfiguration {
         "unbreakable",
         "trim-material",
         "trim-pattern",
+        "axolotl",
         "enchantments"
     );
 
@@ -46,9 +49,11 @@ public class ItemConfiguration {
 
     private Boolean unbreakable = null;
 
-    private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
-
     private ArmorTrim armorTrim = null;
+
+    private Axolotl.Variant axolotl = null;
+
+    private HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 
     public ItemConfiguration(YamlConfiguration config, String id) {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
@@ -97,6 +102,15 @@ public class ItemConfiguration {
             }
         }
 
+        if (config.contains(id + ".axolotl")) {
+            String axolotlName = config.getString(id + ".axolotl");
+            axolotl = EnumTools.fromString(Axolotl.Variant.class, axolotlName);
+            if (axolotl == null) {
+                logger.warning("Invalid axolotl variant for item " + id + ": " + axolotlName);
+                logger.warning("Valid axolotl variants are: " + EnumTools.allStrings(Axolotl.Variant.class));
+            }
+        }
+
         if (config.contains(id + ".enchantments")) {
             for (String enchantmentName : config.getConfigurationSection(id + ".enchantments").getKeys(false)) {
                 Enchantment enchantment = EnchantTools.fromString(enchantmentName);
@@ -139,6 +153,13 @@ public class ItemConfiguration {
             ArmorMeta armorMeta = (ArmorMeta) meta;
             if (armorTrim != null) {
                 armorMeta.setTrim(armorTrim);
+            }
+        }
+
+        if (meta instanceof AxolotlBucketMeta) {
+            AxolotlBucketMeta axolotlMeta = (AxolotlBucketMeta) meta;
+            if (axolotl != null) {
+                axolotlMeta.setVariant(axolotl);
             }
         }
 
