@@ -1,2 +1,56 @@
-example-item:
-  material: diamond_sword
+pickaxe:
+  material: netherite_pickaxe
+  name: '&9Unbreakable Pickaxe'
+  lore:
+  - '&7This pickaxe cannot be broken'
+  unbreakable: true
+helmet:
+  material: diamond_helmet
+  trim-material: quartz
+  trim-pattern: dune
+axolotl-bucket:
+  material: axolotl_bucket
+  axolotl: blue
+banner:
+  material: white_banner
+  banner-patterns:
+  - square_top_right , red
+  - square_bottom_left, blue
+book:
+  material: written_book
+  title: '&3Moby Dick'
+  author: '&bHerman Melville'
+  book-generation: tattered
+  pages:
+  - '&aPage 1'
+  - '&bPage 2'
+  - '&cPage 3'
+  - '&dPage 4'
+  - '&ePage 5'
+tunic:
+  material: leather_chestplate
+  color: '#FF00FF'
+  damage: 20
+compass:
+  material: compass
+  lodestone: world, 0, 64, 0
+potion:
+  name: '&fCustom Potion'
+  material: splash_potion
+  effects:
+  - poison, 0, 60
+  - levitation, 0, 60
+  color: '#000000'
+suspicious-stew:
+  material: suspicious_stew
+  effects:
+  - poison, 0, 60
+  - levitation, 0, 60
+goat-horn:
+  material: goat_horn
+  instrument: yearn_goat_horn
+enchanted-book:
+  material: enchanted_book
+  enchantments:
+    power: 5
+    punch: 2
