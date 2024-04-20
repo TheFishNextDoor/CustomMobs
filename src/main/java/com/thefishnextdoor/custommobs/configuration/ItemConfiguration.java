@@ -278,7 +278,7 @@ public class ItemConfiguration {
                     continue;
                 }
 
-                String effectName = parts[0].trim();
+                String effectName = parts[0];
                 PotionEffectType effectType = RegistryTools.fromString(Registry.EFFECT, effectName);
                 if (effectType == null) {
                     logger.warning("Invalid potion effect for item " + id + ": " + effectName);

@@ -9,7 +9,7 @@ public class RegistryTools {
 
     public static <T extends Keyed> T fromString(Registry<T> registry, String name) {
         try {
-            return registry.get(NamespacedKey.minecraft(name.toLowerCase()));
+            return registry.get(NamespacedKey.minecraft(name.trim().toLowerCase()));
         } catch (Exception e) {
             return null;
         }
