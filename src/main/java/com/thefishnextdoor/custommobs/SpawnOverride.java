@@ -117,8 +117,11 @@ public class SpawnOverride {
                 logger.warning("Valid spawn reasons are: " + EnumTools.allStrings(SpawnReason.class));
                 continue;
             }
-
             spawnReasons.add(reason);
+        }
+        if (spawnReasons.isEmpty()) {
+            logger.warning("No spawn reasons specified for override " + id + ", this override will have no effect");
+            logger.warning("Valid spawn reasons are: " + EnumTools.allStrings(SpawnReason.class));
         }
 
         for (String typeName : config.getStringList(id + ".entity-types")) {
@@ -170,7 +173,7 @@ public class SpawnOverride {
             return false;
         }
 
-        if (spawnReasons.size() > 0 && !spawnReasons.contains(event.getSpawnReason())) {
+        if (!spawnReasons.contains(event.getSpawnReason())) {
             return false;
         }
 
