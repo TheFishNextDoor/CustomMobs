@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -89,6 +90,9 @@ public class MobConfiguration {
         }
 
         this.name = config.getString(id + ".name");
+        if (name != null) {
+            this.name = ChatColor.translateAlternateColorCodes('&', this.name);
+        }
 
         if (config.contains(id + ".glowing")) {
             this.glowing = config.getBoolean(id + ".glowing");
