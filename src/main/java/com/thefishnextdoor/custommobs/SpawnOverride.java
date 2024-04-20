@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
@@ -61,6 +62,7 @@ public class SpawnOverride {
     private HashSet<String> worlds = new HashSet<>();
     private HashSet<Environment> environments = new HashSet<>();
     private HashSet<SpawnReason> spawnReasons = new HashSet<>();
+    private HashSet<SpawnCategory> spawnCategories = new HashSet<>();
     private HashSet<EntityType> entityTypes = new HashSet<>();
 
     private Integer minX = null;
@@ -124,6 +126,16 @@ public class SpawnOverride {
             logger.warning("Valid spawn reasons are: " + EnumTools.allStrings(SpawnReason.class));
         }
 
+        for (String categoryName : config.getStringList(id + ".spawn-categories")) {
+            SpawnCategory category = EnumTools.fromString(SpawnCategory.class, categoryName);
+            if (category == null) {
+                logger.warning("Invalid spawn category for override " + id + ": " + categoryName);
+                logger.warning("Valid spawn categories are: " + EnumTools.allStrings(SpawnCategory.class));
+                continue;
+            }
+            spawnCategories.add(category);
+        }
+
         for (String typeName : config.getStringList(id + ".entity-types")) {
             EntityType entityType = EnumTools.fromString(EntityType.class, typeName);
             if (entityType == null) {
@@ -174,6 +186,10 @@ public class SpawnOverride {
         }
 
         if (!spawnReasons.contains(event.getSpawnReason())) {
+            return false;
+        }
+
+        if (spawnCategories.size() > 0 && !spawnCategories.contains(event.getEntity().getSpawnCategory())) {
             return false;
         }
 
