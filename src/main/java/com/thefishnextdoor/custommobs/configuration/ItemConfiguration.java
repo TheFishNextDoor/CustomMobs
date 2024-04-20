@@ -124,7 +124,7 @@ public class ItemConfiguration {
             this.name = ChatColor.translateAlternateColorCodes('&', this.name);
         }
 
-        this.lore = config.getStringList(id);
+        this.lore = config.getStringList(id + ".lore");
         for (int i = 0; i < lore.size(); i++) {
             lore.set(i, ChatColor.translateAlternateColorCodes('&', lore.get(i)));
         }
