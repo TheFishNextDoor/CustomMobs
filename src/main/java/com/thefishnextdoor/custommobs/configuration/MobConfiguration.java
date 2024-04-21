@@ -13,6 +13,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Phantom;
+import org.bukkit.entity.Slime;
 import org.bukkit.inventory.EntityEquipment;
 
 import com.thefishnextdoor.custommobs.Config;
@@ -41,7 +43,8 @@ public class MobConfiguration {
         "chestplate",
         "leggings",
         "boots",
-        "health"
+        "health",
+        "size"
     );
 
     private final String id;
@@ -68,6 +71,8 @@ public class MobConfiguration {
     private ItemConfiguration boots;
 
     private Integer health = null;
+
+    private Integer size = null;
 
     public MobConfiguration(YamlConfiguration config, String id) {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
@@ -129,6 +134,10 @@ public class MobConfiguration {
 
         if (config.contains(id + ".health")) {
             this.health = config.getInt(id + ".health");
+        }
+
+        if (config.contains(id + ".size")) {
+            this.size = config.getInt(id + ".size");
         }
 
         mobConfigurations.put(id, this);
@@ -216,6 +225,20 @@ public class MobConfiguration {
                     maxHealthAttribute.setBaseValue(health);
                     livingEntity.setHealth(health);
                 }
+            }
+        }
+
+        if (entity instanceof Slime) {
+            Slime slime = (Slime) entity;
+            if (size != null) {
+                slime.setSize(size);
+            }
+        }
+
+        if (entity instanceof Phantom) {
+            Phantom phantom = (Phantom) entity;
+            if (size != null) {
+                phantom.setSize(size);
             }
         }
     }
