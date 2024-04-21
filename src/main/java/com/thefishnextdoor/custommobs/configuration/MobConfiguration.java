@@ -47,7 +47,7 @@ public class MobConfiguration {
         "fuse",
         "pitch",
         "yaw",
-        "effecs",
+        "effects",
         "hand",
         "off-hand",
         "helmet",
@@ -145,9 +145,16 @@ public class MobConfiguration {
 
         if (config.contains(id + ".radius")) {
             this.radius = config.getInt(id + ".radius");
+            if (this.radius != null) {
+                this.radius = Math.max(0, this.radius);
+                this.radius = Math.min(96, this.radius);
+            }
         }
         if (config.contains(id + ".fuse")) {
             this.fuse = config.getInt(id + ".fuse");
+            if (this.fuse != null) {
+                this.fuse = Math.max(0, this.fuse);
+            }
         }
 
         if (config.contains(id + ".pitch")) {
