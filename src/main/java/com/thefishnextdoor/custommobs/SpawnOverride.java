@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
@@ -251,7 +252,7 @@ public class SpawnOverride {
         SpawnReason reason = event.getSpawnReason();
         LivingEntity entity = event.getEntity();
         if (reason == SpawnReason.SLIME_SPLIT) {
-            if (entity.getNearbyEntities(8.0, 8.0, 8.0).size() > 8) {
+            if (entity.getNearbyEntities(8.0, 8.0, 8.0).size() >= entity.getLocation().getWorld().getGameRuleValue(GameRule.MAX_ENTITY_CRAMMING)) {
                 event.setCancelled(true);
                 return;
             }
