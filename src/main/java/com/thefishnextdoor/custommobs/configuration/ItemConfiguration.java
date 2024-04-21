@@ -295,8 +295,8 @@ public class ItemConfiguration {
                 int amplifier;
                 int ticks;
                 try {
-                    amplifier = Integer.parseInt(parts[1].trim());
-                    ticks = Integer.parseInt(parts[2].trim());
+                    amplifier = Integer.parseInt(parts[1]);
+                    ticks = Integer.parseInt(parts[2]);
                 } catch (NumberFormatException e) {
                     logger.warning("Invalid amplifier or duration for potion effect for item " + id + ": " + effectString);
                     logger.warning("Potion effect must be in the format: <effect>, <amplifier>, <ticks>");
