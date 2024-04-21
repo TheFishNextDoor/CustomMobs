@@ -11,6 +11,7 @@ import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -41,6 +42,7 @@ public class MobConfiguration {
         "silent",
         "visual-fire",
         "powered",
+        "baby",
         "radius",
         "fuse",
         "pitch",
@@ -69,6 +71,7 @@ public class MobConfiguration {
     private Boolean silent = null;
     private Boolean visualFire = null;
     private Boolean powered = null;
+    private Boolean baby = null;
 
     private Integer radius = null;
     private Integer fuse = null;
@@ -134,6 +137,9 @@ public class MobConfiguration {
         }
         if (config.contains(id + ".powered")) {
             this.powered = config.getBoolean(id + ".powered");
+        }
+        if (config.contains(id + ".baby")) {
+            this.baby = config.getBoolean(id + ".baby");
         }
 
 
@@ -314,6 +320,18 @@ public class MobConfiguration {
             }
             if (fuse != null) {
                 creeper.setMaxFuseTicks(fuse);
+            }
+        }
+
+        if (entity instanceof Ageable) {
+            Ageable ageable = (Ageable) entity;
+            if (baby != null) {
+                if (baby) {
+                    ageable.setBaby();
+                }
+                else {
+                    ageable.setAdult();
+                }
             }
         }
     }
