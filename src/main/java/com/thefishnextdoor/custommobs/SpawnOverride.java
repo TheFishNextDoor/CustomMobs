@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.SpawnCategory;
@@ -46,7 +47,9 @@ public class SpawnOverride {
         "worlds",
         "environments",
         "spawn-reasons",
+        "spawn-categories",
         "entity-types",
+        "biomes",
         "min-x",
         "min-y",
         "min-z",
@@ -64,6 +67,7 @@ public class SpawnOverride {
     private HashSet<SpawnReason> spawnReasons = new HashSet<>();
     private HashSet<SpawnCategory> spawnCategories = new HashSet<>();
     private HashSet<EntityType> entityTypes = new HashSet<>();
+    private HashSet<Biome> biomes = new HashSet<>();
 
     private Integer minX = null;
     private Integer minY = null;
@@ -143,8 +147,17 @@ public class SpawnOverride {
                 logger.warning("Valid entity types are: " + EnumTools.allStrings(EntityType.class));
                 continue;
             }
-
             entityTypes.add(entityType);
+        }
+
+        for (String biomeName : config.getStringList(id + ".biomes")) {
+            Biome biome = EnumTools.fromString(Biome.class, biomeName);
+            if (biome == null) {
+                logger.warning("Invalid biome for override " + id + ": " + biomeName);
+                logger.warning("Valid biomes are: " + EnumTools.allStrings(Biome.class));
+                continue;
+            }
+            biomes.add(biome);
         }
 
         if (config.contains(id + ".min-x")) {
@@ -194,6 +207,10 @@ public class SpawnOverride {
         }
 
         if (entityTypes.size() > 0 && !entityTypes.contains(event.getEntityType())) {
+            return false;
+        }
+
+        if (biomes.size() > 0 && !biomes.contains(location.getBlock().getBiome())) {
             return false;
         }
 
