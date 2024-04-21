@@ -7,20 +7,25 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.thefishnextdoor.custommobs.Config;
 import com.thefishnextdoor.custommobs.FishsCustomMobs;
 import com.thefishnextdoor.custommobs.util.EndOfTick;
 import com.thefishnextdoor.custommobs.util.EnumTools;
+import com.thefishnextdoor.custommobs.util.RegistryTools;
 
 public class MobConfiguration {
 
@@ -35,8 +40,12 @@ public class MobConfiguration {
         "persistent",
         "silent",
         "visual-fire",
+        "powered",
+        "radius",
+        "fuse",
         "pitch",
         "yaw",
+        "effecs",
         "hand",
         "off-hand",
         "helmet",
@@ -59,9 +68,15 @@ public class MobConfiguration {
     private Boolean persistent = null;
     private Boolean silent = null;
     private Boolean visualFire = null;
+    private Boolean powered = null;
+
+    private Integer radius = null;
+    private Integer fuse = null;
 
     private Float pitch = null;
     private Float yaw = null;
+
+    private ArrayList<PotionEffect> potionEffects = new ArrayList<>();
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -117,12 +132,55 @@ public class MobConfiguration {
         if (config.contains(id + ".visual-fire")) {
             this.visualFire = config.getBoolean(id + ".visual-fire");
         }
+        if (config.contains(id + ".powered")) {
+            this.powered = config.getBoolean(id + ".powered");
+        }
+
+
+        if (config.contains(id + ".radius")) {
+            this.radius = config.getInt(id + ".radius");
+        }
+        if (config.contains(id + ".fuse")) {
+            this.fuse = config.getInt(id + ".fuse");
+        }
 
         if (config.contains(id + ".pitch")) {
             this.pitch = (float) config.getDouble(id + ".pitch");
         }
         if (config.contains(id + ".yaw")) {
             this.yaw = (float) config.getDouble(id + ".yaw");
+        }
+
+        if (config.contains(id + ".effects")) {
+            for (String effectString : config.getStringList(id + ".effects")) {
+                String[] parts = effectString.split(",");
+                if (parts.length != 3) {
+                    logger.warning("Invalid potion effect for mob " + id + ": " + effectString);
+                    logger.warning("Potion effect must be in the format: <effect>, <amplifier>, <ticks>");
+                    continue;
+                }
+
+                String effectName = parts[0];
+                PotionEffectType effectType = RegistryTools.fromString(Registry.EFFECT, effectName);
+                if (effectType == null) {
+                    logger.warning("Invalid potion effect for mob " + id + ": " + effectName);
+                    logger.warning("Valid potion effects are: " + RegistryTools.allStrings(Registry.EFFECT));
+                    continue;
+                }
+
+                int amplifier;
+                int ticks;
+                try {
+                    amplifier = Integer.parseInt(parts[1].trim());
+                    ticks = Integer.parseInt(parts[2].trim());
+                } catch (NumberFormatException e) {
+                    logger.warning("Invalid amplifier or duration for potion effect for mob " + id + ": " + effectString);
+                    logger.warning("Potion effect must be in the format: <effect>, <amplifier>, <ticks>");
+                    continue;
+                }
+
+                potionEffects.add(new PotionEffect(effectType, ticks, amplifier));
+            }
         }
 
         this.hand = ItemConfiguration.get(config.getString(id + ".hand"));
@@ -198,8 +256,12 @@ public class MobConfiguration {
 
         if (entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
-            EntityEquipment equipment = livingEntity.getEquipment();
 
+            for (PotionEffect effect : potionEffects) {
+                livingEntity.addPotionEffect(effect);
+            }
+
+            EntityEquipment equipment = livingEntity.getEquipment();
             if (hand != null) {
                 equipment.setItemInMainHand(hand.create(1));
             }
@@ -239,6 +301,19 @@ public class MobConfiguration {
             Phantom phantom = (Phantom) entity;
             if (size != null) {
                 phantom.setSize(size);
+            }
+        }
+
+        if (entity instanceof Creeper) {
+            Creeper creeper = (Creeper) entity;
+            if (powered != null) {
+                creeper.setPowered(powered);
+            }
+            if (radius != null) {
+                creeper.setExplosionRadius(radius);
+            }
+            if (fuse != null) {
+                creeper.setMaxFuseTicks(fuse);
             }
         }
     }
