@@ -1,3 +1,31 @@
-example-mob:
-  name: "&dExample Mob"
+pig:
   type: pig
+  name: '&dFlying Pig'
+  glowing: true
+  gravity: false
+  invulnerable: true
+  persistent: true
+skeleton:
+  type: skeleton
+  name: '&7Sneaky Skeleton'
+  silent: true
+  helmet: helmet
+zombie:
+  type: zombie
+  name: '&cFlaming Zombie'
+  visual-fire: true
+  pitch: 0.0
+  yaw: 0.0
+  helmet: banner
+  chestplate: tunic
+  hand: book
+  off-hand: goat-horn
+  health: 150
+slime:
+  type: slime
+  name: '&aForever Slime'
+  size: 2
+phantom:
+  type: phantom
+  size: 20
+  
