@@ -10,6 +10,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -247,8 +248,17 @@ public class SpawnOverride {
             totalWeight += linkedEntityConfiguration.getWeight();
         }
 
+        SpawnReason reason = event.getSpawnReason();
+        LivingEntity entity = event.getEntity();
+        if (reason == SpawnReason.SLIME_SPLIT) {
+            if (entity.getNearbyEntities(8.0, 8.0, 8.0).size() > 8) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         boolean delayRemoval;
-        switch (event.getSpawnReason()) {
+        switch (reason) {
             case SPAWNER_EGG:
             case BUILD_IRONGOLEM:
             case BUILD_SNOWMAN:
@@ -264,7 +274,7 @@ public class SpawnOverride {
         for (LinkedMobConfiguration linkedEntityConfiguration : linkedMobConfigurations) {
             random -= linkedEntityConfiguration.getWeight();
             if (random <= 0) {
-                linkedEntityConfiguration.unWrap().applyTo(event.getEntity(), delayRemoval);
+                linkedEntityConfiguration.unWrap().applyTo(entity, delayRemoval);
                 return;
             }
         }
