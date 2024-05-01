@@ -3,6 +3,9 @@ package com.thefishnextdoor.custommobs.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -102,14 +105,8 @@ public class FCM implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This subcommand can only be run by a player");
-            return true;
-        }
-        Player player = (Player) sender;
-
         // Summon //
-        if (args[0].equalsIgnoreCase("summon") && player.hasPermission(SUMMON_PERMISSION)) {
+        if (args[0].equalsIgnoreCase("summon") && sender.hasPermission(SUMMON_PERMISSION)) {
             if (args.length == 1) {
                 sender.sendMessage("/fcm summon <mob>");
                 return true;
@@ -121,19 +118,50 @@ public class FCM implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            mobConfiguration.spawn(player.getLocation());
-            player.sendMessage("Summoned " + mobConfiguration.getId());
+            Location location = null;
+            // Get location in the form of /summon <mob> <world> <x> <y> <z>
+            if (args.length >= 6) {
+                World world = Bukkit.getWorld(args[2]);
+                if (world == null) {
+                    sender.sendMessage(ChatColor.RED + "Invalid world");
+                    return true;
+                }
+
+                try {
+                    double x = Double.parseDouble(args[3]);
+                    double y = Double.parseDouble(args[4]);
+                    double z = Double.parseDouble(args[5]);
+                    location = new Location(world, x, y, z);
+                }
+                catch (NumberFormatException e) {
+                    sender.sendMessage(ChatColor.RED + "Invalid coordinates");
+                    return true;
+                }
+            }
+
+            if (location == null && sender instanceof Player) {
+                location = ((Player) sender).getLocation();
+            }
+
+            if (location == null) {
+                sender.sendMessage(ChatColor.RED + "Invalid location");
+                sender.sendMessage("/fcm summon <mob> <world> <x> <y> <z>");
+                return true;
+            }
+
+            mobConfiguration.spawn(location);
+            sender.sendMessage("Summoned " + mobConfiguration.getId());
             return true;
         }
 
         // Give //
-        if (args[0].equalsIgnoreCase("give") && player.hasPermission(GIVE_PERMISSION)) {
+        if (args[0].equalsIgnoreCase("give") && sender.hasPermission(GIVE_PERMISSION)) {
             if (args.length == 1) {
                 sender.sendMessage("/fcm give <player> <item> [amount]");
                 return true;
             }
 
-            Player target = player.getServer().getPlayer(args[1]);
+            Player target = sender.getServer().getPlayer(args[1]);
             if (target == null) {
                 sender.sendMessage(ChatColor.RED + "Invalid player");
                 return true;
@@ -162,7 +190,7 @@ public class FCM implements CommandExecutor, TabCompleter {
             }
 
             target.getInventory().addItem(itemConfiguration.create(amount));
-            player.sendMessage("Gave " + target.getName() + " " + amount + " " + itemConfiguration.getId());
+            sender.sendMessage("Gave " + target.getName() + " " + amount + " " + itemConfiguration.getId());
             return true;
         }
 
