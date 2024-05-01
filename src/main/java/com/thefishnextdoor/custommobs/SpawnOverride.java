@@ -263,7 +263,7 @@ public class SpawnOverride {
                 break;
         }
 
-        int random = (int) (Math.random() * totalWeight);
+        int random = (int) (Math.random() * (totalWeight + 1));
         for (LinkedMobConfiguration linkedEntityConfiguration : linkedMobConfigurations) {
             random -= linkedEntityConfiguration.getWeight();
             if (random <= 0) {
