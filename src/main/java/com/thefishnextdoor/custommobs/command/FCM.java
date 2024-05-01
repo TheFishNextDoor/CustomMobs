@@ -131,7 +131,7 @@ public class FCM implements CommandExecutor, TabCompleter {
                     double x = Double.parseDouble(args[3]);
                     double y = Double.parseDouble(args[4]);
                     double z = Double.parseDouble(args[5]);
-                    location = new Location(world, x, y, z);
+                    location = new Location(world, x , y, z);
                 }
                 catch (NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + "Invalid coordinates");
@@ -139,7 +139,7 @@ public class FCM implements CommandExecutor, TabCompleter {
                 }
             }
 
-            if (location == null && sender instanceof Player) {
+            if (args.length == 2 && sender instanceof Player) {
                 location = ((Player) sender).getLocation();
             }
 
