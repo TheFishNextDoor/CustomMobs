@@ -91,6 +91,10 @@ public class SpawnOverride {
 
         this.priority = config.getInt(id + ".priority");
 
+        if (!config.contains(id + ".mobs")) {
+            logger.warning("No mobs specified for override " + id + ", this override will have no effect");
+            return;
+        }
         for (String mobId : config.getConfigurationSection(id + ".mobs").getKeys(false)) {
             int weight = config.getInt(id + ".mobs." + mobId);
             MobConfiguration mobConfiguration = MobConfiguration.get(mobId);
