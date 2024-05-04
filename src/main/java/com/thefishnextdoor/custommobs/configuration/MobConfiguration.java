@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
@@ -20,7 +21,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.material.Colorable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -91,6 +94,8 @@ public class MobConfiguration {
     private Float yaw = null;
 
     private ArrayList<PotionEffect> potionEffects = new ArrayList<>();
+
+    private DyeColor color = null;
 
     private Villager.Type villager = null;
     private Villager.Profession profession = null;
@@ -189,6 +194,14 @@ public class MobConfiguration {
         }
         if (config.contains(id + ".yaw")) {
             this.yaw = (float) config.getDouble(id + ".yaw");
+        }
+
+        if (config.contains(id + ".color")) {
+            this.color = EnumTools.fromString(DyeColor.class, config.getString(id + ".color"));
+            if (color == null) {
+                logger.warning("Invalid color for mob " + id);
+                logger.warning("Valid colors are: " + EnumTools.allStrings(DyeColor.class));
+            }
         }
 
         if (config.contains(id + ".villager")) {
@@ -402,10 +415,27 @@ public class MobConfiguration {
             }
         }
 
+        if (entity instanceof Colorable) {
+            Colorable colorable = (Colorable) entity;
+            if (this.color != null) {
+                colorable.setColor(this.color);
+            }
+        }
+
         if (entity instanceof Cat) {
             Cat cat = (Cat) entity;
             if (this.cat != null) {
                 cat.setCatType(this.cat);
+            }
+            if (this.color != null) {
+                cat.setCollarColor(this.color);
+            }
+        }
+
+        if (entity instanceof Wolf) {
+            Wolf wolf = (Wolf) entity;
+            if (this.color != null) {
+                wolf.setCollarColor(this.color);
             }
         }
     }
