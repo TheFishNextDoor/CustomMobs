@@ -7,7 +7,7 @@ public class EnumTools {
             return null;
         }
 
-        name = name.trim();
+        name = name.trim().replace(" ", "_").replace("-", "_");
 
         for (E constant : enumClass.getEnumConstants()) {
             if (constant.name().equalsIgnoreCase(name)) {

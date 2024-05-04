@@ -8,8 +8,14 @@ import org.bukkit.Registry;
 public class RegistryTools {
 
     public static <T extends Keyed> T fromString(Registry<T> registry, String name) {
+        if (name == null) {
+            return null;
+        }
+
+        name = name.trim().replace(" ", "_").replace("-", "_");
+        
         try {
-            return registry.get(NamespacedKey.minecraft(name.trim().toLowerCase()));
+            return registry.get(NamespacedKey.minecraft(name));
         } catch (Exception e) {
             return null;
         }

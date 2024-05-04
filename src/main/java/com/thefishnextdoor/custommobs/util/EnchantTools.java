@@ -8,6 +8,12 @@ import org.bukkit.enchantments.Enchantment;
 public class EnchantTools {
 
     public static Enchantment fromString(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        name = name.trim().replace(" ", "_").replace("-", "_");
+
         Iterator<Enchantment> enchantmentIter = Registry.ENCHANTMENT.iterator();
         while (enchantmentIter.hasNext()) {
             Enchantment enchantment = enchantmentIter.next();
@@ -17,5 +23,4 @@ public class EnchantTools {
         }
         return null;
     }
-    
 }
