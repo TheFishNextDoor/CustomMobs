@@ -21,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Llama;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Rabbit;
@@ -75,6 +76,7 @@ public class MobConfiguration {
         "horse-style",
         "tropical-fish-pattern",
         "tropical-fish-pattern-color",
+        "llama",
         "hand",
         "off-hand",
         "helmet",
@@ -129,6 +131,8 @@ public class MobConfiguration {
 
     private TropicalFish.Pattern tropicalFishPattern = null;
     private DyeColor tropicalFishPatternColor = null;
+
+    private Llama.Color llama = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -342,6 +346,14 @@ public class MobConfiguration {
             if (tropicalFishPatternColor == null) {
                 logger.warning("Invalid tropical fish pattern color for mob " + id);
                 logger.warning("Valid tropical fish pattern colors are: " + EnumTools.allStrings(DyeColor.class));
+            }
+        }
+
+        if (config.contains("id" + ".llama")) {
+            this.llama = EnumTools.fromString(Llama.Color.class, config.getString(id + ".llama"));
+            if (llama == null) {
+                logger.warning("Invalid llama color for mob " + id);
+                logger.warning("Valid llama colors are: " + EnumTools.allStrings(Llama.Color.class));
             }
         }
 
@@ -572,6 +584,13 @@ public class MobConfiguration {
             }
             if (this.tropicalFishPatternColor != null) {
                 fish.setPatternColor(this.tropicalFishPatternColor);
+            }
+        }
+
+        if (entity instanceof Llama) {
+            Llama llama = (Llama) entity;
+            if (this.llama != null) {
+                llama.setColor(this.llama);
             }
         }
     }
