@@ -25,6 +25,7 @@ import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.EntityEquipment;
@@ -72,6 +73,8 @@ public class MobConfiguration {
         "rabbit",
         "horse-color",
         "horse-style",
+        "tropical-fish-pattern",
+        "tropical-fish-pattern-color",
         "hand",
         "off-hand",
         "helmet",
@@ -123,6 +126,9 @@ public class MobConfiguration {
 
     private Horse.Color horseColor = null;
     private Horse.Style horseStyle = null;
+
+    private TropicalFish.Pattern tropicalFishPattern = null;
+    private DyeColor tropicalFishPatternColor = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -322,6 +328,21 @@ public class MobConfiguration {
             if (horseStyle == null) {
                 logger.warning("Invalid horse style for mob " + id);
                 logger.warning("Valid horse styles are: " + EnumTools.allStrings(Horse.Style.class));
+            }
+        }
+
+        if (config.contains("id" + ".tropical-fish-pattern")) {
+            this.tropicalFishPattern = EnumTools.fromString(TropicalFish.Pattern.class, config.getString(id + ".tropical-fish-pattern"));
+            if (tropicalFishPattern == null) {
+                logger.warning("Invalid tropical fish pattern for mob " + id);
+                logger.warning("Valid tropical fish patterns are: " + EnumTools.allStrings(TropicalFish.Pattern.class));
+            }
+        }
+        if (config.contains("id" + ".tropical-fish-pattern-color")) {
+            this.tropicalFishPatternColor = EnumTools.fromString(DyeColor.class, config.getString(id + ".tropical-fish-pattern-color"));
+            if (tropicalFishPatternColor == null) {
+                logger.warning("Invalid tropical fish pattern color for mob " + id);
+                logger.warning("Valid tropical fish pattern colors are: " + EnumTools.allStrings(DyeColor.class));
             }
         }
 
@@ -539,6 +560,19 @@ public class MobConfiguration {
             }
             if (this.horseStyle != null) {
                 horse.setStyle(this.horseStyle);
+            }
+        }
+
+        if (entity instanceof TropicalFish) {
+            TropicalFish fish = (TropicalFish) entity;
+            if (this.color != null) {
+                fish.setBodyColor(this.color);
+            }
+            if (this.tropicalFishPattern != null) {
+                fish.setPattern(this.tropicalFishPattern);
+            }
+            if (this.tropicalFishPatternColor != null) {
+                fish.setPatternColor(this.tropicalFishPatternColor);
             }
         }
     }
