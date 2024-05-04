@@ -44,6 +44,7 @@ public class MobConfiguration {
         "powered",
         "baby",
         "pickup-items",
+        "despawn",
         "radius",
         "fuse",
         "pitch",
@@ -74,6 +75,7 @@ public class MobConfiguration {
     private Boolean powered = null;
     private Boolean baby = null;
     private Boolean pickupItems = null;
+    private Boolean despawn = null;
 
     private Integer health = null;
     private Integer size = null;
@@ -147,6 +149,9 @@ public class MobConfiguration {
         }
         if (config.contains(id + ".pickup-items")) {
             this.pickupItems = config.getBoolean(id + ".pickup-items");
+        }
+        if (config.contains(id + ".despawn")) {
+            this.despawn = config.getBoolean(id + ".despawn");
         }
 
         if (config.contains(id + ".health")) {
@@ -276,6 +281,9 @@ public class MobConfiguration {
 
             if (pickupItems != null) {
                 livingEntity.setCanPickupItems(pickupItems);
+            }
+            if (despawn != null) {
+                livingEntity.setRemoveWhenFarAway(despawn);
             }
 
             for (PotionEffect effect : potionEffects) {
