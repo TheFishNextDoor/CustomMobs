@@ -43,6 +43,7 @@ public class MobConfiguration {
         "visual-fire",
         "powered",
         "baby",
+        "pickup-items",
         "radius",
         "fuse",
         "pitch",
@@ -72,6 +73,7 @@ public class MobConfiguration {
     private Boolean visualFire = null;
     private Boolean powered = null;
     private Boolean baby = null;
+    private Boolean pickupItems = null;
 
     private Integer health = null;
     private Integer size = null;
@@ -142,6 +144,9 @@ public class MobConfiguration {
         }
         if (config.contains(id + ".baby")) {
             this.baby = config.getBoolean(id + ".baby");
+        }
+        if (config.contains(id + ".pickup-items")) {
+            this.pickupItems = config.getBoolean(id + ".pickup-items");
         }
 
         if (config.contains(id + ".health")) {
@@ -268,6 +273,10 @@ public class MobConfiguration {
 
         if (entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
+
+            if (pickupItems != null) {
+                livingEntity.setCanPickupItems(pickupItems);
+            }
 
             for (PotionEffect effect : potionEffects) {
                 livingEntity.addPotionEffect(effect);
