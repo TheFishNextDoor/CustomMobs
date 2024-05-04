@@ -73,6 +73,8 @@ public class MobConfiguration {
     private Boolean powered = null;
     private Boolean baby = null;
 
+    private Integer health = null;
+    private Integer size = null;
     private Integer radius = null;
     private Integer fuse = null;
 
@@ -88,15 +90,15 @@ public class MobConfiguration {
     private ItemConfiguration leggings;
     private ItemConfiguration boots;
 
-    private Integer health = null;
-
-    private Integer size = null;
-
     public MobConfiguration(YamlConfiguration config, String id) {
         Logger logger = FishsCustomMobs.getInstance().getLogger();
         
         this.id = id;
 
+        if (!config.contains(id)) {
+            logger.severe("Could not find configuration for mob: " + id);
+            return;
+        }
         for (String setting : config.getConfigurationSection(id).getKeys(false)) {
             if (!settings.contains(setting)) {
                 logger.warning("Invalid setting for mob " + id + ": " + setting);
@@ -142,7 +144,12 @@ public class MobConfiguration {
             this.baby = config.getBoolean(id + ".baby");
         }
 
-
+        if (config.contains(id + ".health")) {
+            this.health = config.getInt(id + ".health");
+        }
+        if (config.contains(id + ".size")) {
+            this.size = config.getInt(id + ".size");
+        }
         if (config.contains(id + ".radius")) {
             this.radius = config.getInt(id + ".radius");
             if (this.radius != null) {
@@ -202,14 +209,6 @@ public class MobConfiguration {
         this.chestplate = ItemConfiguration.get(config.getString(id + ".chestplate"));
         this.leggings = ItemConfiguration.get(config.getString(id + ".leggings"));
         this.boots = ItemConfiguration.get(config.getString(id + ".boots"));
-
-        if (config.contains(id + ".health")) {
-            this.health = config.getInt(id + ".health");
-        }
-
-        if (config.contains(id + ".size")) {
-            this.size = config.getInt(id + ".size");
-        }
 
         mobConfigurations.put(id, this);
     }
