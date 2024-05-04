@@ -14,6 +14,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -53,6 +54,7 @@ public class MobConfiguration {
         "baby",
         "pickup-items",
         "despawn",
+        "chested",
         "radius",
         "fuse",
         "pitch",
@@ -91,6 +93,7 @@ public class MobConfiguration {
     private Boolean baby = null;
     private Boolean pickupItems = null;
     private Boolean despawn = null;
+    private Boolean chested = null;
 
     private Integer health = null;
     private Integer size = null;
@@ -180,6 +183,9 @@ public class MobConfiguration {
         }
         if (config.contains(id + ".despawn")) {
             this.despawn = config.getBoolean(id + ".despawn");
+        }
+        if (config.contains(id + ".chested")) {
+            this.chested = config.getBoolean(id + ".chested");
         }
 
         if (config.contains(id + ".health")) {
@@ -494,6 +500,13 @@ public class MobConfiguration {
             Rabbit rabbit = (Rabbit) entity;
             if (this.rabbit != null) {
                 rabbit.setRabbitType(this.rabbit);
+            }
+        }
+
+        if (entity instanceof ChestedHorse) {
+            ChestedHorse horse = (ChestedHorse) entity;
+            if (this.chested != null) {
+                horse.setCarryingChest(this.chested);
             }
         }
     }
