@@ -19,6 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Villager;
@@ -61,6 +62,7 @@ public class MobConfiguration {
         "profession",
         "cat",
         "fox",
+        "parrot",
         "hand",
         "off-hand",
         "helmet",
@@ -106,6 +108,8 @@ public class MobConfiguration {
     private Cat.Type cat = null;
 
     private Fox.Type fox = null;
+
+    private Parrot.Variant parrot = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -238,6 +242,14 @@ public class MobConfiguration {
             if (fox == null) {
                 logger.warning("Invalid fox type for mob " + id);
                 logger.warning("Valid fox types are: " + EnumTools.allStrings(Fox.Type.class));
+            }
+        }
+
+        if (config.contains(id + ".parrot")) {
+            this.parrot = EnumTools.fromString(Parrot.Variant.class, config.getString(id + ".parrot"));
+            if (parrot == null) {
+                logger.warning("Invalid parrot type for mob " + id);
+                logger.warning("Valid parrot types are: " + EnumTools.allStrings(Parrot.Variant.class));
             }
         }
 
@@ -456,6 +468,13 @@ public class MobConfiguration {
             Fox fox = (Fox) entity;
             if (this.fox != null) {
                 fox.setFoxType(this.fox);
+            }
+        }
+
+        if (entity instanceof Parrot) {
+            Parrot parrot = (Parrot) entity;
+            if (this.parrot != null) {
+                parrot.setVariant(this.parrot);
             }
         }
     }
