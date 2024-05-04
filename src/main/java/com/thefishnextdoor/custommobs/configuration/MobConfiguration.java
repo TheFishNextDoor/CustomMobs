@@ -18,6 +18,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -50,6 +51,8 @@ public class MobConfiguration {
         "pitch",
         "yaw",
         "effects",
+        "villager",
+        "profession",
         "hand",
         "off-hand",
         "helmet",
@@ -86,6 +89,9 @@ public class MobConfiguration {
     private Float yaw = null;
 
     private ArrayList<PotionEffect> potionEffects = new ArrayList<>();
+
+    private Villager.Type villager = null;
+    private Villager.Profession profession = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -181,6 +187,18 @@ public class MobConfiguration {
             this.yaw = (float) config.getDouble(id + ".yaw");
         }
 
+        villager = EnumTools.fromString(Villager.Type.class, config.getString(id + ".villager"));
+        if (villager == null) {
+            logger.warning("Invalid villager type for mob " + id);
+            logger.warning("Valid villager types are: " + EnumTools.allStrings(Villager.Type.class));
+        }
+
+        profession = EnumTools.fromString(Villager.Profession.class, config.getString(id + ".profession"));
+        if (profession == null) {
+            logger.warning("Invalid villager profession for mob " + id);
+            logger.warning("Valid villager professions are: " + EnumTools.allStrings(Villager.Profession.class));
+        }
+
         if (config.contains(id + ".effects")) {
             for (String effectString : config.getStringList(id + ".effects")) {
                 String[] parts = effectString.split(",");
@@ -233,7 +251,7 @@ public class MobConfiguration {
     }
 
     public void applyTo(Entity entity, boolean removeAtEndOfTick) {
-        if (entity.getType() != type) {
+        if (entity.getType() != this.type) {
             this.spawn(entity.getLocation());
             if (removeAtEndOfTick) {
                 EndOfTick.remove(entity);
@@ -244,46 +262,46 @@ public class MobConfiguration {
             return;
         }
 
-        if (name != null) {
-            entity.setCustomName(name);
+        if (this.name != null) {
+            entity.setCustomName(this.name);
             entity.setCustomNameVisible(true);
         }
 
-        if (glowing != null) {
-            entity.setGlowing(glowing);
+        if (this.glowing != null) {
+            entity.setGlowing(this.glowing);
         }
-        if (gravity != null) {
-            entity.setGravity(gravity);
+        if (this.gravity != null) {
+            entity.setGravity(this.gravity);
         }
-        if (invulnerable != null) {
-            entity.setInvulnerable(invulnerable);
+        if (this.invulnerable != null) {
+            entity.setInvulnerable(this.invulnerable);
         }
-        if (persistent != null) {
-            entity.setPersistent(persistent);
+        if (this.persistent != null) {
+            entity.setPersistent(this.persistent);
         }
-        if (silent != null) {
-            entity.setSilent(silent);
+        if (this.silent != null) {
+            entity.setSilent(this.silent);
         }
-        if (visualFire != null) {
-            entity.setVisualFire(visualFire);
+        if (this.visualFire != null) {
+            entity.setVisualFire(this.visualFire);
         }
 
         Location location = entity.getLocation();
-        if (pitch != null) {
-            location.setPitch(pitch);
+        if (this.pitch != null) {
+            location.setPitch(this.pitch);
         }
-        if (yaw != null) {
-            location.setYaw(yaw);
+        if (this.yaw != null) {
+            location.setYaw(this.yaw);
         }
 
         if (entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
 
-            if (pickupItems != null) {
-                livingEntity.setCanPickupItems(pickupItems);
+            if (this.pickupItems != null) {
+                livingEntity.setCanPickupItems(this.pickupItems);
             }
-            if (despawn != null) {
-                livingEntity.setRemoveWhenFarAway(despawn);
+            if (this.despawn != null) {
+                livingEntity.setRemoveWhenFarAway(this.despawn);
             }
 
             for (PotionEffect effect : potionEffects) {
@@ -291,70 +309,80 @@ public class MobConfiguration {
             }
 
             EntityEquipment equipment = livingEntity.getEquipment();
-            if (hand != null) {
-                equipment.setItemInMainHand(hand.create(1));
+            if (this.hand != null) {
+                equipment.setItemInMainHand(this.hand.create(1));
             }
-            if (offHand != null) {
-                equipment.setItemInOffHand(offHand.create(1));
+            if (this.offHand != null) {
+                equipment.setItemInOffHand(this.offHand.create(1));
             }
-            if (helmet != null) {
-                equipment.setHelmet(helmet.create(1));
+            if (this.helmet != null) {
+                equipment.setHelmet(this.helmet.create(1));
             }
-            if (chestplate != null) {
-                equipment.setChestplate(chestplate.create(1));
+            if (this.chestplate != null) {
+                equipment.setChestplate(this.chestplate.create(1));
             }
-            if (leggings != null) {
-                equipment.setLeggings(leggings.create(1));
+            if (this.leggings != null) {
+                equipment.setLeggings(this.leggings.create(1));
             }
-            if (boots != null) {
-                equipment.setBoots(boots.create(1));
+            if (this.boots != null) {
+                equipment.setBoots(this.boots.create(1));
             }
 
-            if (health != null) {
+            if (this.health != null) {
                 AttributeInstance maxHealthAttribute = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(health);
-                    livingEntity.setHealth(health);
+                    maxHealthAttribute.setBaseValue(this.health);
+                    livingEntity.setHealth(this.health);
                 }
             }
         }
 
         if (entity instanceof Slime) {
             Slime slime = (Slime) entity;
-            if (size != null) {
-                slime.setSize(size);
+            if (this.size != null) {
+                slime.setSize(this.size);
             }
         }
 
         if (entity instanceof Phantom) {
             Phantom phantom = (Phantom) entity;
-            if (size != null) {
-                phantom.setSize(size);
+            if (this.size != null) {
+                phantom.setSize(this.size);
             }
         }
 
         if (entity instanceof Creeper) {
             Creeper creeper = (Creeper) entity;
-            if (powered != null) {
-                creeper.setPowered(powered);
+            if (this.powered != null) {
+                creeper.setPowered(this.powered);
             }
-            if (radius != null) {
-                creeper.setExplosionRadius(radius);
+            if (this.radius != null) {
+                creeper.setExplosionRadius(this.radius);
             }
-            if (fuse != null) {
-                creeper.setMaxFuseTicks(fuse);
+            if (this.fuse != null) {
+                creeper.setMaxFuseTicks(this.fuse);
             }
         }
 
         if (entity instanceof Ageable) {
             Ageable ageable = (Ageable) entity;
-            if (baby != null) {
-                if (baby) {
+            if (this.baby != null) {
+                if (this.baby) {
                     ageable.setBaby();
                 }
                 else {
                     ageable.setAdult();
                 }
+            }
+        }
+
+        if (entity instanceof Villager) {
+            Villager villager = (Villager) entity;
+            if (this.villager != null) {
+                villager.setVillagerType(this.villager);
+            }
+            if (this.profession != null) {
+                villager.setProfession(this.profession);
             }
         }
     }
