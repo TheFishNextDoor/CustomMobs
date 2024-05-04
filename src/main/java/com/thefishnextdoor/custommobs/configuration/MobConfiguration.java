@@ -12,6 +12,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -53,6 +54,7 @@ public class MobConfiguration {
         "effects",
         "villager",
         "profession",
+        "cat",
         "hand",
         "off-hand",
         "helmet",
@@ -92,6 +94,8 @@ public class MobConfiguration {
 
     private Villager.Type villager = null;
     private Villager.Profession profession = null;
+
+    private Cat.Type cat = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -187,16 +191,28 @@ public class MobConfiguration {
             this.yaw = (float) config.getDouble(id + ".yaw");
         }
 
-        villager = EnumTools.fromString(Villager.Type.class, config.getString(id + ".villager"));
-        if (villager == null) {
-            logger.warning("Invalid villager type for mob " + id);
-            logger.warning("Valid villager types are: " + EnumTools.allStrings(Villager.Type.class));
+        if (config.contains(id + ".villager")) {
+            this.villager = EnumTools.fromString(Villager.Type.class, config.getString(id + ".villager"));
+            if (villager == null) {
+                logger.warning("Invalid villager type for mob " + id);
+                logger.warning("Valid villager types are: " + EnumTools.allStrings(Villager.Type.class));
+            }
         }
 
-        profession = EnumTools.fromString(Villager.Profession.class, config.getString(id + ".profession"));
-        if (profession == null) {
-            logger.warning("Invalid villager profession for mob " + id);
-            logger.warning("Valid villager professions are: " + EnumTools.allStrings(Villager.Profession.class));
+        if (config.contains(id + ".profession")) {
+            this.profession = EnumTools.fromString(Villager.Profession.class, config.getString(id + ".profession"));
+            if (profession == null) {
+                logger.warning("Invalid villager profession for mob " + id);
+                logger.warning("Valid villager professions are: " + EnumTools.allStrings(Villager.Profession.class));
+            }
+        }
+
+        if (config.contains(id + ".cat")) {
+            this.cat = EnumTools.fromString(Cat.Type.class, config.getString(id + ".cat"));
+            if (cat == null) {
+                logger.warning("Invalid cat type for mob " + id);
+                logger.warning("Valid cat types are: " + EnumTools.allStrings(Cat.Type.class));
+            }
         }
 
         if (config.contains(id + ".effects")) {
@@ -383,6 +399,13 @@ public class MobConfiguration {
             }
             if (this.profession != null) {
                 villager.setProfession(this.profession);
+            }
+        }
+
+        if (entity instanceof Cat) {
+            Cat cat = (Cat) entity;
+            if (this.cat != null) {
+                cat.setCatType(this.cat);
             }
         }
     }
