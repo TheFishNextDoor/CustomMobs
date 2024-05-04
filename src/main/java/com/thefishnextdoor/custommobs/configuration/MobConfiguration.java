@@ -19,6 +19,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Phantom;
@@ -57,6 +58,8 @@ public class MobConfiguration {
         "chested",
         "radius",
         "fuse",
+        "health",
+        "size",
         "pitch",
         "yaw",
         "effects",
@@ -67,14 +70,14 @@ public class MobConfiguration {
         "fox",
         "parrot",
         "rabbit",
+        "horse-color",
+        "horse-style",
         "hand",
         "off-hand",
         "helmet",
         "chestplate",
         "leggings",
-        "boots",
-        "health",
-        "size"
+        "boots"
     );
 
     private final String id;
@@ -117,6 +120,9 @@ public class MobConfiguration {
     private Parrot.Variant parrot = null;
 
     private Rabbit.Type rabbit = null;
+
+    private Horse.Color horseColor = null;
+    private Horse.Style horseStyle = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -300,6 +306,22 @@ public class MobConfiguration {
                 }
 
                 potionEffects.add(new PotionEffect(effectType, ticks, amplifier));
+            }
+        }
+
+        if (config.contains("id" + ".horse-color")) {
+            this.horseColor = EnumTools.fromString(Horse.Color.class, config.getString(id + ".horse-color"));
+            if (horseColor == null) {
+                logger.warning("Invalid horse color for mob " + id);
+                logger.warning("Valid horse colors are: " + EnumTools.allStrings(Horse.Color.class));
+            }
+        }
+
+        if (config.contains("id" + ".horse-style")) {
+            this.horseStyle = EnumTools.fromString(Horse.Style.class, config.getString(id + ".horse-style"));
+            if (horseStyle == null) {
+                logger.warning("Invalid horse style for mob " + id);
+                logger.warning("Valid horse styles are: " + EnumTools.allStrings(Horse.Style.class));
             }
         }
 
@@ -507,6 +529,16 @@ public class MobConfiguration {
             ChestedHorse horse = (ChestedHorse) entity;
             if (this.chested != null) {
                 horse.setCarryingChest(this.chested);
+            }
+        }
+
+        if (entity instanceof Horse) {
+            Horse horse = (Horse) entity;
+            if (this.horseColor != null) {
+                horse.setColor(this.horseColor);
+            }
+            if (this.horseStyle != null) {
+                horse.setStyle(this.horseStyle);
             }
         }
     }
