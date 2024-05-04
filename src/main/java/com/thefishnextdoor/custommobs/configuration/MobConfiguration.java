@@ -17,6 +17,7 @@ import org.bukkit.entity.Cat;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
@@ -55,9 +56,11 @@ public class MobConfiguration {
         "pitch",
         "yaw",
         "effects",
+        "color",
         "villager",
         "profession",
         "cat",
+        "fox",
         "hand",
         "off-hand",
         "helmet",
@@ -101,6 +104,8 @@ public class MobConfiguration {
     private Villager.Profession profession = null;
 
     private Cat.Type cat = null;
+
+    private Fox.Type fox = null;
 
     private ItemConfiguration hand;
     private ItemConfiguration offHand;
@@ -225,6 +230,14 @@ public class MobConfiguration {
             if (cat == null) {
                 logger.warning("Invalid cat type for mob " + id);
                 logger.warning("Valid cat types are: " + EnumTools.allStrings(Cat.Type.class));
+            }
+        }
+
+        if (config.contains(id + ".fox")) {
+            this.fox = EnumTools.fromString(Fox.Type.class, config.getString(id + ".fox"));
+            if (fox == null) {
+                logger.warning("Invalid fox type for mob " + id);
+                logger.warning("Valid fox types are: " + EnumTools.allStrings(Fox.Type.class));
             }
         }
 
@@ -436,6 +449,13 @@ public class MobConfiguration {
             Wolf wolf = (Wolf) entity;
             if (this.color != null) {
                 wolf.setCollarColor(this.color);
+            }
+        }
+
+        if (entity instanceof Fox) {
+            Fox fox = (Fox) entity;
+            if (this.fox != null) {
+                fox.setFoxType(this.fox);
             }
         }
     }
