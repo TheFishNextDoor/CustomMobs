@@ -71,7 +71,7 @@ public class MobConfiguration {
         "fox",
         "parrot",
         "rabbit",
-        "horse-color",
+        "horse",
         "horse-style",
         "tropical-fish-pattern",
         "tropical-fish-pattern-color",
@@ -124,7 +124,7 @@ public class MobConfiguration {
 
     private Rabbit.Type rabbit = null;
 
-    private Horse.Color horseColor = null;
+    private Horse.Color horse = null;
     private Horse.Style horseStyle = null;
 
     private TropicalFish.Pattern tropicalFishPattern = null;
@@ -315,14 +315,13 @@ public class MobConfiguration {
             }
         }
 
-        if (config.contains("id" + ".horse-color")) {
-            this.horseColor = EnumTools.fromString(Horse.Color.class, config.getString(id + ".horse-color"));
-            if (horseColor == null) {
+        if (config.contains("id" + ".horse")) {
+            this.horse = EnumTools.fromString(Horse.Color.class, config.getString(id + ".horse"));
+            if (horse == null) {
                 logger.warning("Invalid horse color for mob " + id);
                 logger.warning("Valid horse colors are: " + EnumTools.allStrings(Horse.Color.class));
             }
         }
-
         if (config.contains("id" + ".horse-style")) {
             this.horseStyle = EnumTools.fromString(Horse.Style.class, config.getString(id + ".horse-style"));
             if (horseStyle == null) {
@@ -555,8 +554,8 @@ public class MobConfiguration {
 
         if (entity instanceof Horse) {
             Horse horse = (Horse) entity;
-            if (this.horseColor != null) {
-                horse.setColor(this.horseColor);
+            if (this.horse != null) {
+                horse.setColor(this.horse);
             }
             if (this.horseStyle != null) {
                 horse.setStyle(this.horseStyle);
