@@ -1,5 +1,7 @@
 package com.thefishnextdoor.custommobs.util;
 
+import com.thefishnextdoor.custommobs.Debug;
+
 public class EnumTools {
 
     public static <E extends Enum<E>> E fromString(Class<E> enumClass, String name) {
@@ -9,7 +11,13 @@ public class EnumTools {
 
         name = name.trim().replace(" ", "_").replace("-", "_");
 
-        for (E constant : enumClass.getEnumConstants()) {
+        E[] constants = enumClass.getEnumConstants();
+        if (constants == null) {
+            Debug.error(enumClass.getName() + " is not a valid enum class");
+            return null;
+        }
+
+        for (E constant : constants) {
             if (constant.name().equalsIgnoreCase(name)) {
                 return constant;
             }
@@ -20,7 +28,14 @@ public class EnumTools {
 
     public static String allStrings(Class<? extends Enum<?>> enumClass) {
         StringBuilder builder = new StringBuilder();
-        for (Enum<?> constant : enumClass.getEnumConstants()) {
+
+        Enum<?>[] constants = enumClass.getEnumConstants();
+        if (constants == null) {
+            Debug.error(enumClass.getName() + " is not a valid enum class");
+            return "None";
+        }
+
+        for (Enum<?> constant : constants) {
             if (builder.length() > 0) {
                 builder.append(", ");
             }
